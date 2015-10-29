@@ -1,6 +1,6 @@
 {
   "name": "angular-redactor-filepicker-bundle",
-  "main": ["angular-redactor-filepicker.js","./src/redactor.css"]
+  "main": ["angular-redactor-filepicker.js","./src/redactor.css"],
   "version": "1.6.0",
   "homepage": "https://github.com/UseFedora/angular-redactor-filepicker-bundle",
   "authors": [
