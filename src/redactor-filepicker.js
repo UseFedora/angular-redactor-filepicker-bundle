@@ -21,7 +21,7 @@ $.Redactor.prototype.filepicker = function() {
 
     },
     insert: function(object) {
-      html = "<img src='" + object.url + "'>"
+      html = "<img src='" + object.url + " class='img-responsive'>"
 
       this.insert.html(html);
 
@@ -30,4 +30,3 @@ $.Redactor.prototype.filepicker = function() {
     }
   };
 };
-

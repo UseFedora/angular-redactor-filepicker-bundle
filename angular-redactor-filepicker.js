@@ -9720,7 +9720,7 @@ $.Redactor.prototype.filepicker = function() {
 
     },
     insert: function(object) {
-      html = "<img src='" + object.url + "'>"
+      html = "<img src='" + object.url + " class='img-responsive'>"
 
       this.insert.html(html);
 
@@ -9730,7 +9730,8 @@ $.Redactor.prototype.filepicker = function() {
   };
 };
 
-
+(function($)
+{
   $.Redactor.prototype.fullscreen = function()
   {
     return {
@@ -9889,7 +9890,7 @@ $.Redactor.prototype.filepicker = function() {
       }
     };
   };
-
+})(jQuery);
 // if (!RedactorPlugins) var RedactorPlugins = {};
 
 // if (!RedactorPlugins) var RedactorPlugins = {};
@@ -10047,8 +10048,7 @@ $.Redactor.prototype.filepicker = function() {
 //   };
 // };
 
-(function() {
-    'use strict';
+
 
     /**
      * usage: <textarea ng-model="content" redactor></textarea>
@@ -10120,5 +10120,5 @@ $.Redactor.prototype.filepicker = function() {
                 }
             };
         }]);
-})();
+
 

@@ -1,3 +1,5 @@
+(function($)
+{
   $.Redactor.prototype.fullscreen = function()
   {
     return {
@@ -156,3 +158,4 @@
       }
     };
   };
+})(jQuery);

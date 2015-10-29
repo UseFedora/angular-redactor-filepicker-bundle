@@ -155,8 +155,7 @@
 //   };
 // };
 
-(function() {
-    'use strict';
+
 
     /**
      * usage: <textarea ng-model="content" redactor></textarea>
@@ -228,5 +227,5 @@
                 }
             };
         }]);
-})();
+
 
