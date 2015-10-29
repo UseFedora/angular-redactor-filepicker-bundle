@@ -1,0 +1,20 @@
+{
+  "name": "angular-redactor-filepicker",
+  "version": "0.0.1",
+  "description": "teachable.com build of redactor",
+  "main": "gulpfile.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/UseFedora/angular-redactor.git"
+  },
+  "license": "NONE",
+  "bugs": {
+    "url": "https://github.com/UseFedora/angular-redactor/issues"
+  },
+  "homepage": "https://github.com/UseFedora/angular-redactor#readme",
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-coffee": "^2.3.1",
+    "gulp-concat": "^2.6.0"
+  }
+}
