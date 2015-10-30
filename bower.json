@@ -1,7 +1,10 @@
 {
   "name": "angular-redactor-filepicker-bundle",
-  "main": ["angular-redactor-filepicker.js","./src/redactor.css"],
-  "version": "1.6.0",
+  "main": [
+    "angular-redactor-filepicker.js",
+    "./src/redactor.css"
+  ],
+  "version": "1.7.0",
   "homepage": "https://github.com/UseFedora/angular-redactor-filepicker-bundle",
   "authors": [
     "Tyler Garlick <tjgarlick@gmail.com>",
@@ -25,8 +28,7 @@
     "test",
     "tests"
   ],
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "jquery": ">=2.0.0",
     "angular": ">=1.3",
