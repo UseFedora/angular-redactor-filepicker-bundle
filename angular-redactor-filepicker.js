@@ -9710,17 +9710,13 @@ $.Redactor.prototype.filepicker = function() {
       filepicker.pick(this.filepicker.insert, {
         mimetype: 'image/*',
         container: 'modal',
-        services: [
-          "COMPUTER",
-          "IMAGE_SEARCH",
-          "URL",
-          "FTP"
-        ]
+        services: ["CUSTOMSOURCE, COMPUTER, IMAGE_SEARCH, URL, FTP, DROPBOX, GOOGLE_DRIVE, SKYDRIVE, CONVERT, IMGUR"],
+        convert_options:  ["crop", "rotate", "filter"]
       });
 
     },
     insert: function(object) {
-      html = "<img src='" + object.url + " class='img-responsive'>"
+      html = "<img src='" + object.url + "' class='img-responsive'>"
 
       this.insert.html(html);
 
