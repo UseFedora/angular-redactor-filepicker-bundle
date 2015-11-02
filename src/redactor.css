@@ -53,7 +53,7 @@
   z-index: 100;
 }
 .redactor-dropdown {
-  z-index: 1052;
+  z-index: 2000;
 }
 #redactor-modal-overlay,
 #redactor-modal-box,
