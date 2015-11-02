@@ -7,6 +7,7 @@ gulp.task('default', function() {
     'src/redactor-filepicker.js',
     'src/redactor-fontcolor.js',
     'src/redactor-fontfamily.js',
+    'src/redactor-fontsize.js',
     'src/redactor-fullscreen.js',
     'src/angular-redactor.js'
   ]
