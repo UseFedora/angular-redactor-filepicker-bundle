@@ -18,8 +18,7 @@ $.Redactor.prototype.filepicker = function() {
     },
     insert: function(object) {
       html = "<img src='" + object.url + "' class='img-responsive'>"
-
-      this.insert.html(html);
+      this.insert.htmlWithoutClean(html);
 
       this.code.sync();
 
