@@ -9712,11 +9712,15 @@ $.Redactor.prototype.filepicker = function() {
         container: 'modal',
         services: ["CUSTOMSOURCE, COMPUTER, IMAGE_SEARCH, URL, FTP, DROPBOX, GOOGLE_DRIVE, SKYDRIVE, CONVERT, IMGUR"],
         convert_options:  ["crop", "rotate", "filter"]
+      },
+      {
+        location:"S3"
       });
 
     },
     insert: function(object) {
-      html = "<img src='" + object.url + "' class='img-responsive'>"
+      image_url = "https://d2vvqscadf4c1f.cloudfront.net/" + object.key;
+      html = "<img src='" + image_url + "' class='img-responsive'>"
       this.insert.htmlWithoutClean(html);
 
       this.code.sync();
