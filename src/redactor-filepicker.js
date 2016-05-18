@@ -20,8 +20,7 @@ $.Redactor.prototype.filepicker = function() {
 
     },
     insert: function(object) {
-      image_url = "https://d2vvqscadf4c1f.cloudfront.net/" + encodeURIComponent(object.key);
-      html = "<img src='" + image_url + "' class='img-responsive'>"
+      html = "<img src='" + object.url + "' class='img-responsive'>"
       this.insert.htmlWithoutClean(html);
 
       this.code.sync();
