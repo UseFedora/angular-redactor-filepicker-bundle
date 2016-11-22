@@ -11,8 +11,7 @@ $.Redactor.prototype.filepicker = function() {
       filepicker.pick(this.filepicker.insert, {
         mimetype: 'image/*',
         container: 'modal',
-        services: ["CUSTOMSOURCE, COMPUTER, IMAGE_SEARCH, URL, FTP, DROPBOX, GOOGLE_DRIVE, SKYDRIVE, CONVERT, IMGUR"],
-        convert_options:  ["crop", "rotate", "filter"]
+        services: ["CUSTOMSOURCE, COMPUTER, IMAGE_SEARCH, URL, FTP, DROPBOX, GOOGLE_DRIVE, SKYDRIVE"]
       },
       {
         location:"S3"
