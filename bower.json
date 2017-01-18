@@ -4,11 +4,12 @@
     "angular-redactor-filepicker.js",
     "./src/redactor.css"
   ],
-  "version": "1.16.0",
+  "version": "1.17.0",
   "homepage": "https://github.com/UseFedora/angular-redactor-filepicker-bundle",
   "authors": [
     "Tyler Garlick <tjgarlick@gmail.com>",
-    "Noah Pryor <noah@noahpryor.com>"
+    "Noah Pryor <noah@noahpryor.com>",
+    "Michael Poage <poage.michael.cu@gmail.com>"
   ],
   "description": "Directive for redactor WYSIWYG editor with filepicker, get a license",
   "keywords": [
