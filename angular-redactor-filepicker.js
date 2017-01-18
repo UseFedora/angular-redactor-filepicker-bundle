@@ -9710,8 +9710,7 @@ $.Redactor.prototype.filepicker = function() {
       filepicker.pick(this.filepicker.insert, {
         mimetype: 'image/*',
         container: 'modal',
-        services: ["CUSTOMSOURCE, COMPUTER, IMAGE_SEARCH, URL, FTP, DROPBOX, GOOGLE_DRIVE, SKYDRIVE, CONVERT, IMGUR"],
-        convert_options:  ["crop", "rotate", "filter"]
+        services: ["CUSTOMSOURCE, COMPUTER, IMAGE_SEARCH, URL, FTP, DROPBOX, GOOGLE_DRIVE, SKYDRIVE"]
       },
       {
         location:"S3"
@@ -9811,7 +9810,22 @@ $.Redactor.prototype.filepicker = function() {
     return {
       init: function ()
       {
-        var fonts = [ 'Arial', 'Helvetica', 'Georgia', 'Times New Roman', 'Monospace' ];
+        var fonts = [
+          'Arial',
+          'Helvetica',
+          'Georgia',
+          'Times New Roman',
+          'Monospace',
+          'Proxima',
+          'Alegreya',
+          'Lato',
+          'Lucida Sans Unicode',
+          'Merriweather',
+          'OpenSans',
+          'Palatino',
+          'Raleway',
+          'SourceSansPro'
+        ];
         var that = this;
         var dropdown = {};
 
@@ -9820,7 +9834,7 @@ $.Redactor.prototype.filepicker = function() {
           dropdown['s' + i] = { title: s, func: function() { that.fontfamily.set(s); }};
         });
 
-        dropdown.remove = { title: 'Remove Font Family', func: that.fontfamily.reset };
+        dropdown.remove = { title: 'Use Default Font', func: that.fontfamily.reset };
 
         var button = this.button.add('fontfamily', 'Change Font Family');
         this.button.addDropdown(button, dropdown);
@@ -9838,6 +9852,7 @@ $.Redactor.prototype.filepicker = function() {
   };
 
  })(jQuery);
+
   (function($)
 {
 
