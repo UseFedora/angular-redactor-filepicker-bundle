@@ -6,7 +6,22 @@
     return {
       init: function ()
       {
-        var fonts = [ 'Arial', 'Helvetica', 'Georgia', 'Times New Roman', 'Monospace' ];
+        var fonts = [
+          'Arial',
+          'Helvetica',
+          'Georgia',
+          'Times New Roman',
+          'Monospace',
+          'Proxima',
+          'Alegreya',
+          'Lato',
+          'Lucida Sans Unicode',
+          'Merriweather',
+          'OpenSans',
+          'Palatino',
+          'Raleway',
+          'SourceSansPro'
+        ];
         var that = this;
         var dropdown = {};
 
@@ -15,7 +30,7 @@
           dropdown['s' + i] = { title: s, func: function() { that.fontfamily.set(s); }};
         });
 
-        dropdown.remove = { title: 'Remove Font Family', func: that.fontfamily.reset };
+        dropdown.remove = { title: 'Use Default Font', func: that.fontfamily.reset };
 
         var button = this.button.add('fontfamily', 'Change Font Family');
         this.button.addDropdown(button, dropdown);
