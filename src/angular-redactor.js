@@ -28,7 +28,7 @@
                             autosaveCallback: updateModel,
                             focusCallback: updateModel,
                             blurCallback: updateModel,
-                            plugins: ['filepicker', 'fullscreen', 'fontcolor', 'fontsize', 'fontfamily'],
+                            plugins: ['filepicker', 'fullscreen', 'fontcolor', 'fontsize', 'fontfamily', 'limiter'],
                             buttons: ['html', 'formatting', 'bold', 'italic', 'underline', 'orderedlist', 'unorderedlist', 'outdent', 'indent', 'image', 'file', 'link', 'alignment', 'horizontalrule'],
                             deniedTags: ['html', 'head', 'body', 'meta', 'applet'],
                             replaceDivs: false
