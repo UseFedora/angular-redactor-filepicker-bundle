@@ -9805,52 +9805,6 @@ $.Redactor.prototype.filepicker = function() {
 
 (function($)
 {
-  $.Redactor.prototype.limiter = function()
-  {
-    return {
-      init: function()
-      {
-        if (!this.opts.limiter)
-        {
-          return;
-        }
-
-        this.core.editor().on('keydown.redactor-plugin-limiter', $.proxy(function(e)
-        {
-          var key = e.which;
-          var ctrl = e.ctrlKey || e.metaKey;
-
-          if (key === this.keyCode.BACKSPACE
-              || key === this.keyCode.DELETE
-              || key === this.keyCode.ESC
-              || key === this.keyCode.SHIFT
-              || (ctrl && key === 65)
-              || (ctrl && key === 82)
-              || (ctrl && key === 116)
-          )
-          {
-            return;
-          }
-
-          var text = this.core.editor().text();
-          text = text.replace(/\u200B/g, '');
-
-          var count = text.length;
-          if (count >= this.opts.limiter)
-          {
-            return false;
-          }
-
-
-        }, this));
-
-      }
-    };
-  };
-})(jQuery);
-
-(function($)
-{
 
   $.Redactor.prototype.fontfamily = function()
   {
@@ -9933,6 +9887,58 @@ $.Redactor.prototype.filepicker = function() {
     };
   };
 })(jQuery);
+
+(function($)
+{
+  $.Redactor.prototype.limiter = function()
+  {
+    return {
+      init: function()
+      {
+        if (!this.opts.limiter)
+        {
+          return;
+        }
+
+        this.core.getEditor().on('keydown.redactor-plugin-limiter', $.proxy(function(e)
+        {
+
+          var key = e.which;
+          var ctrl = e.ctrlKey || e.metaKey;
+
+          if (key === this.keyCode.BACKSPACE
+              || key === this.keyCode.DELETE
+              || key === this.keyCode.ESC
+              || key === this.keyCode.SHIFT
+              || key === this.keyCode.LEFT
+              || key === this.keyCode.RIGHT
+              || key === this.keyCode.UP
+              || key === this.keyCode.DOWN
+              || (ctrl && key === 65)
+              || (ctrl && key === 82)
+              || (ctrl && key === 116)
+          )
+          {
+            return;
+          }
+
+          var text = this.core.getEditor().text();
+          text = text.replace(/\u200B/g, '');
+
+          var count = text.length;
+          if (count >= this.opts.limiter)
+          {
+            return false;
+          }
+
+
+        }, this));
+
+      }
+    };
+  };
+})(jQuery);
+
 (function($)
 {
   $.Redactor.prototype.fullscreen = function()
@@ -10124,7 +10130,7 @@ $.Redactor.prototype.filepicker = function() {
                             autosaveCallback: updateModel,
                             focusCallback: updateModel,
                             blurCallback: updateModel,
-                            plugins: ['filepicker', 'fullscreen', 'fontcolor', 'fontsize', 'fontfamily'],
+                            plugins: ['limiter', 'filepicker', 'fullscreen', 'fontcolor', 'fontsize', 'fontfamily'],
                             buttons: ['html', 'formatting', 'bold', 'italic', 'underline', 'orderedlist', 'unorderedlist', 'outdent', 'indent', 'image', 'file', 'link', 'alignment', 'horizontalrule'],
                             deniedTags: ['html', 'head', 'body', 'meta', 'applet'],
                             replaceDivs: false
