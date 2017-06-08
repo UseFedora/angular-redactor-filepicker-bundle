@@ -10,13 +10,10 @@
   Usage: $('#content').redactor();
 */
 
-(function($)
-{
-
+(function($) {
   'use strict';
 
-  if (!Function.prototype.bind)
-  {
+  if (!Function.prototype.bind) {
     Function.prototype.bind = function(scope)
     {
       var fn = this;
@@ -30,15 +27,12 @@
   var uuid = 0;
 
   // Plugin
-  $.fn.redactor = function(options)
-  {
+  $.fn.redactor = function(options) {
     var val = [];
     var args = Array.prototype.slice.call(arguments, 1);
 
-    if (typeof options === 'string')
-    {
-      this.each(function()
-      {
+    if (typeof options === 'string') {
+      this.each(function() {
         var instance = $.data(this, 'redactor');
         var func;
 
@@ -458,27 +452,21 @@
     alignment: function()
     {
       return {
-        left: function()
-        {
+        left: function() {
           this.alignment.set('');
         },
-        right: function()
-        {
+        right: function() {
           this.alignment.set('right');
         },
-        center: function()
-        {
+        center: function() {
           this.alignment.set('center');
         },
-        justify: function()
-        {
+        justify: function() {
           this.alignment.set('justify');
         },
-        set: function(type)
-        {
+        set: function(type) {
           // focus
-          if (!this.utils.browser('msie') && !this.opts.linebreaks)
-          {
+          if (!this.utils.browser('msie') && !this.opts.linebreaks) {
             this.$editor.focus();
           }
 
@@ -490,12 +478,9 @@
           this.selection.save();
 
           // set alignment
-          if (this.alignment.isLinebreaksOrNoBlocks())
-          {
+          if (this.alignment.isLinebreaksOrNoBlocks()) {
             this.alignment.setText();
-          }
-          else
-          {
+          } else {
             this.alignment.setBlocks();
           }
 
@@ -503,13 +488,11 @@
           this.selection.restore();
           this.code.sync();
         },
-        setText: function()
-        {
+        setText: function() {
           var wrapper = this.selection.wrap('div');
           $(wrapper).attr('data-tagblock', 'redactor').css('text-align', this.alignment.type);
         },
-        setBlocks: function()
-        {
+        setBlocks: function() {
           $.each(this.alignment.blocks, $.proxy(function(i, el)
           {
             var $el = this.utils.getAlignmentElement(el);
@@ -526,8 +509,7 @@
 
           }, this));
         },
-        isLinebreaksOrNoBlocks: function()
-        {
+        isLinebreaksOrNoBlocks: function() {
           return (this.opts.linebreaks && this.alignment.blocks[0] === false);
         },
         isNeedReplaceElement: function($el)
@@ -545,8 +527,7 @@
         }
       };
     },
-    autosave: function()
-    {
+    autosave: function() {
       return {
         html: false,
         enable: function()
@@ -1631,31 +1612,39 @@
         },
         onClick: function(e, btnName, type, callback)
         {
-          this.button.caretOffset = this.caret.getOffset();
-
           e.preventDefault();
+
+          this.button.caretOffset = this.caret.getOffset();
 
           $(document).find('.redactor-toolbar-tooltip').hide();
 
           if (this.utils.browser('msie')) e.returnValue = false;
 
-          if (type == 'command') this.inline.format(callback);
-          else if (type == 'dropdown') this.dropdown.show(e, btnName);
-          else this.button.onClickCallback(e, callback, btnName);
+          if (type == 'command') {
+            this.inline.format(callback);
+          } else if (type == 'dropdown') {
+            this.dropdown.show(e, btnName);
+          } else {
+            this.button.onClickCallback(e, callback, btnName);
+          }
         },
         onClickCallback: function(e, callback, btnName)
         {
           var func;
 
-          if ($.isFunction(callback)) callback.call(this, btnName);
-          else if (callback.search(/\./) != '-1')
-          {
+          if ($.isFunction(callback)) {
+            callback.call(this, btnName);
+          } else if (callback.search(/\./) != '-1') {
             func = callback.split('.');
-            if (typeof this[func[0]] == 'undefined') return;
+
+            if (typeof this[func[0]] == 'undefined') {
+              return;
+            }
 
             this[func[0]][func[1]](btnName);
+          } else {
+            this[callback](btnName);
           }
-          else this[callback](btnName);
 
           this.observe.buttons(e, btnName);
         },
@@ -1797,8 +1786,7 @@
         }
       };
     },
-    caret: function()
-    {
+    caret: function() {
       return {
         setStart: function(node)
         {
@@ -1826,8 +1814,7 @@
           this.caret.set(node, 1, node, 1);
 
         },
-        set: function(orgn, orgo, focn, foco)
-        {
+        set: function(orgn, orgo, focn, foco) {
           // focus
           // disabled in 10.0.7
           // if (!this.utils.browser('msie')) this.$editor.focus();
@@ -1835,13 +1822,11 @@
           orgn = orgn[0] || orgn;
           focn = focn[0] || focn;
 
-          if (this.utils.isBlockTag(orgn.tagName) && orgn.innerHTML === '')
-          {
+          if (this.utils.isBlockTag(orgn.tagName) && orgn.innerHTML === '') {
             orgn.innerHTML = this.opts.invisibleSpace;
           }
 
-          if (orgn.tagName == 'BR' && this.opts.linebreaks === false)
-          {
+          if (orgn.tagName == 'BR' && this.opts.linebreaks === false) {
             var parent = $(this.opts.emptyHtml)[0];
             $(orgn).replaceWith(parent);
             orgn = parent;
@@ -1850,12 +1835,12 @@
 
           this.selection.get();
 
-          try
-          {
+          try {
             this.range.setStart(orgn, orgo);
             this.range.setEnd(focn, foco);
+          } catch (e) {
+            console.log(e);
           }
-          catch (e) {}
 
           this.selection.addRange();
         },
@@ -4282,50 +4267,45 @@
           this.inline.format(this.formatting[name].tag, type, value);
 
         },
-        format: function(tag, type, value)
-        {
+        format: function(tag, type, value) {
           var current = this.selection.getCurrent();
-          if (current && current.tagName === 'TR') return;
+
+          if (current && current.tagName === 'TR') {
+            return;
+          }
 
           // Stop formatting pre and headers
-          if (this.utils.isCurrentOrParent('PRE') || this.utils.isCurrentOrParentHeader()) return;
+          if (this.utils.isCurrentOrParent('PRE') || this.utils.isCurrentOrParentHeader()) {
+            return;
+          }
 
           var tags = ['b', 'bold', 'i', 'italic', 'underline', 'strikethrough', 'deleted', 'superscript', 'subscript'];
           var replaced = ['strong', 'strong', 'em', 'em', 'u', 'del', 'del', 'sup', 'sub'];
 
-          for (var i = 0; i < tags.length; i++)
-          {
+          for (var i = 0; i < tags.length; i++) {
             if (tag == tags[i]) tag = replaced[i];
           }
 
 
-          if (this.opts.allowedTags)
-          {
+          if (this.opts.allowedTags) {
             if ($.inArray(tag, this.opts.allowedTags) == -1) return;
-          }
-          else
-          {
+          } else {
             if ($.inArray(tag, this.opts.deniedTags) !== -1) return;
           }
 
           this.inline.type = type || false;
           this.inline.value = value || false;
-
           this.buffer.set();
 
-          if (!this.utils.browser('msie') && !this.opts.linebreaks)
-          {
+          if (!this.utils.browser('msie') && !this.opts.linebreaks) {
             this.$editor.focus();
           }
 
           this.selection.get();
 
-          if (this.range.collapsed)
-          {
+          if (this.range.collapsed) {
             this.inline.formatCollapsed(tag);
-          }
-          else
-          {
+          } else {
             this.inline.formatMultiple(tag);
           }
         },
@@ -4364,43 +4344,38 @@
 
           this.code.sync();
         },
-        formatMultiple: function(tag)
-        {
+        formatMultiple: function(tag) {
           this.inline.formatConvert(tag);
 
-          this.selection.save();
           document.execCommand('strikethrough');
 
-          this.$editor.find('strike').each($.proxy(function(i,s)
-          {
+          this.selection.save();
+
+          this.$editor.find('strike').each($.proxy(function(i,s) {
             var $el = $(s);
 
             this.inline.formatRemoveSameChildren($el, tag);
 
             var $span;
-            if (this.inline.type)
-            {
+
+            if (this.inline.type) {
               $span = $('<span>').attr('data-redactor-tag', tag).attr('data-verified', 'redactor');
               $span = this.inline.setFormat($span);
-            }
-            else
-            {
+            } else {
               $span = $('<' + tag + '>').attr('data-redactor-tag', tag).attr('data-verified', 'redactor');
             }
 
             $el.replaceWith($span.html($el.contents()));
+
             var $parent = $span.parent();
 
             // remove U tag if selected link + node
-            if ($span[0].tagName === 'A' && $parent && $parent[0].tagName === 'U')
-            {
+            if ($span[0].tagName === 'A' && $parent && $parent[0].tagName === 'U') {
               $span.parent().replaceWith($span);
             }
 
-            if (tag == 'span')
-            {
-              if ($parent && $parent[0].tagName === 'SPAN' && this.inline.type === 'style')
-              {
+            if (tag == 'span') {
+              if ($parent && $parent[0].tagName === 'SPAN' && this.inline.type === 'style') {
                 var arr = this.inline.value.split(';');
 
                 for (var z = 0; z < arr.length; z++)
@@ -4422,61 +4397,51 @@
           }, this));
 
           // clear text decoration
-          if (tag != 'span')
-          {
-            this.$editor.find(this.opts.inlineTags.join(', ')).each($.proxy(function(i,s)
-            {
+          if (tag != 'span') {
+            this.$editor.find(this.opts.inlineTags.join(', ')).each($.proxy(function(i,s) {
               var $el = $(s);
 
-
-              if (s.tagName === 'U' && s.attributes.length === 0)
-              {
+              if (s.tagName === 'U' && s.attributes.length === 0) {
                 $el.replaceWith($el.contents());
                 return;
               }
 
               var property = $el.css('text-decoration');
-              if (property === 'line-through')
-              {
+
+              if (property === 'line-through') {
                 $el.css('text-decoration', '');
+
                 this.utils.removeEmptyAttr($el, 'style');
               }
             }, this));
           }
 
-          if (tag != 'del')
-          {
+          if (tag != 'del') {
             var _this = this;
-            this.$editor.find('inline').each(function(i,s)
-            {
+
+            this.$editor.find('inline').each(function(i,s) {
               _this.utils.replaceToTag(s, 'del');
             });
           }
 
-          if (tag != 'u')
-          {
+          if (tag != 'u') {
             var _this = this;
-            this.$editor.find('unline').each(function(i,s)
-            {
+
+            this.$editor.find('unline').each(function(i,s) {
               _this.utils.replaceToTag(s, 'u');
             });
           }
 
           this.selection.restore();
           this.code.sync();
-
         },
-        formatRemoveSameChildren: function($el, tag)
-        {
+        formatRemoveSameChildren: function($el, tag) {
           var self = this;
-          $el.children(tag).each(function()
-          {
+          $el.children(tag).each(function() {
             var $child = $(this);
 
-            if (!$child.hasClass('redactor-selection-marker'))
-            {
-              if (self.inline.type == 'style')
-              {
+            if (!$child.hasClass('redactor-selection-marker')) {
+              if (self.inline.type == 'style') {
                 var arr = self.inline.value.split(';');
 
                 for (var z = 0; z < arr.length; z++)
@@ -4501,51 +4466,44 @@
 
           });
         },
-        formatConvert: function(tag)
-        {
+        formatConvert: function(tag) {
           this.selection.save();
 
           var find = '';
-          if (this.inline.type == 'class') find = '[data-redactor-class=' + this.inline.value + ']';
-          else if (this.inline.type == 'style')
-          {
+
+          if (this.inline.type == 'class') {
+            find = '[data-redactor-class=' + this.inline.value + ']';
+          } else if (this.inline.type == 'style') {
             find = '[data-redactor-style="' + this.inline.value + '"]';
           }
 
           var self = this;
-          if (tag != 'del')
-          {
-            this.$editor.find('del').each(function(i,s)
-            {
+
+          if (tag != 'del') {
+            this.$editor.find('del').each(function(i, s) {
               self.utils.replaceToTag(s, 'inline');
             });
           }
 
-          if (tag != 'u')
-          {
-            this.$editor.find('u').each(function(i,s)
-            {
+          if (tag != 'u') {
+            this.$editor.find('u').each(function(i, s) {
               self.utils.replaceToTag(s, 'unline');
             });
           }
 
-          if (tag != 'span')
-          {
-            this.$editor.find(tag).each(function()
-            {
+          if (tag != 'span') {
+            this.$editor.find(tag).each(function() {
               var $el = $(this);
               $el.replaceWith($('<strike />').html($el.contents()));
-
             });
           }
 
-          this.$editor.find('[data-redactor-tag="' + tag + '"]' + find).each(function()
-          {
-            if (find === '' && tag == 'span' && this.tagName.toLowerCase() == tag) return;
+          this.$editor.find('[data-redactor-tag="' + tag + '"]' + find).each(function() {
+            if (find === '' && tag == 'span' && this.tagName.toLowerCase() == tag) {
+              return;
+            }
 
-            var $el = $(this);
-            $el.replaceWith($('<strike />').html($el.contents()));
-
+            $(this).replaceWith($('<strike />').html($(this).contents()));
           });
 
           this.selection.restore();
@@ -7757,32 +7715,24 @@
           }
 
         },
-        restore: function()
-        {
+        restore: function() {
           var node1 = this.$editor.find('span#selection-marker-1');
           var node2 = this.$editor.find('span#selection-marker-2');
 
-          if (this.utils.browser('mozilla'))
-          {
+          if (this.utils.browser('mozilla')) {
             this.$editor.focus();
           }
 
-          if (node1.length !== 0 && node2.length !== 0)
-          {
+          if (node1.length !== 0 && node2.length !== 0) {
             this.caret.set(node1, 0, node2, 0);
-          }
-          else if (node1.length !== 0)
-          {
+          } else if (node1.length !== 0) {
             this.caret.set(node1, 0, node1, 0);
-          }
-          else
-          {
+          } else {
             this.$editor.focus();
           }
 
           this.selection.removeMarkers();
           this.savedSel = false;
-
         },
         removeMarkers: function()
         {
@@ -9697,6 +9647,7 @@
   Redactor.prototype.init.prototype = Redactor.prototype;
 
 })(jQuery);
+
 $.Redactor.prototype.filepicker = function() {
   return {
     init: function() {
@@ -9802,7 +9753,6 @@ $.Redactor.prototype.filepicker = function() {
     };
   }
  })(jQuery);
-
 (function($)
 {
 
@@ -9887,58 +9837,6 @@ $.Redactor.prototype.filepicker = function() {
     };
   };
 })(jQuery);
-
-(function($)
-{
-  $.Redactor.prototype.limiter = function()
-  {
-    return {
-      init: function()
-      {
-        if (!this.opts.limiter)
-        {
-          return;
-        }
-
-        this.core.getEditor().on('keydown.redactor-plugin-limiter', $.proxy(function(e)
-        {
-
-          var key = e.which;
-          var ctrl = e.ctrlKey || e.metaKey;
-
-          if (key === this.keyCode.BACKSPACE
-              || key === this.keyCode.DELETE
-              || key === this.keyCode.ESC
-              || key === this.keyCode.SHIFT
-              || key === this.keyCode.LEFT
-              || key === this.keyCode.RIGHT
-              || key === this.keyCode.UP
-              || key === this.keyCode.DOWN
-              || (ctrl && key === 65)
-              || (ctrl && key === 82)
-              || (ctrl && key === 116)
-          )
-          {
-            return;
-          }
-
-          var text = this.core.getEditor().text();
-          text = text.replace(/\u200B/g, '');
-
-          var count = text.length;
-          if (count >= this.opts.limiter)
-          {
-            return false;
-          }
-
-
-        }, this));
-
-      }
-    };
-  };
-})(jQuery);
-
 (function($)
 {
   $.Redactor.prototype.fullscreen = function()
@@ -10101,72 +9999,71 @@ $.Redactor.prototype.filepicker = function() {
   };
 })(jQuery);
 
-    /**
-     * usage: <textarea ng-model="content" redactor></textarea>
-     *
-     *    additional options:
-     *      redactor: hash (pass in a redactor options hash)
-     *
-     */
-    var redactorOptions = {};
-    angular.module('angular-redactor-filepicker', [])
-        .constant('redactorOptions', redactorOptions)
-        .directive('redactor', ['$timeout', function($timeout) {
-            return {
-                restrict: 'A',
-                require: 'ngModel',
-                link: function(scope, element, attrs, ngModel) {
+/**
+ * usage: <textarea ng-model="content" redactor></textarea>
+ *
+ *    additional options:
+ *      redactor: hash (pass in a redactor options hash)
+ *
+ */
+var redactorOptions = {};
 
-                  // Expose scope var with loaded state of Redactor
-                    scope.redactorLoaded = false;
+angular.module('angular-redactor-filepicker', [])
+  .constant('redactorOptions', redactorOptions)
+  .directive('redactor', ['$timeout', function($timeout) {
+    return {
+      restrict: 'A',
+      require: 'ngModel',
+      link: function(scope, element, attrs, ngModel) {
+        // Expose scope var with loaded state of Redactor
+        scope.redactorLoaded = false;
 
-                        var updateModel = function() {
-                            scope.$apply(ngModel.$setViewValue($_element.redactor('code.get')));
-                        },
-                        options = {
-                            keyupCallback: updateModel,
-                            keydownCallback: updateModel,
-                            execCommandCallback: updateModel,
-                            autosaveCallback: updateModel,
-                            focusCallback: updateModel,
-                            blurCallback: updateModel,
-                            plugins: ['limiter', 'filepicker', 'fullscreen', 'fontcolor', 'fontsize', 'fontfamily'],
-                            buttons: ['html', 'formatting', 'bold', 'italic', 'underline', 'orderedlist', 'unorderedlist', 'outdent', 'indent', 'image', 'file', 'link', 'alignment', 'horizontalrule'],
-                            deniedTags: ['html', 'head', 'body', 'meta', 'applet'],
-                            replaceDivs: false
-                        },
-                        additionalOptions = attrs.redactor ?
-                            scope.$eval(attrs.redactor) : {},
-                        editor,
-                        $_element = angular.element(element);
+        var updateModel = function() {
+          scope.$apply(ngModel.$setViewValue($_element.redactor('code.get')));
+        };
+        var options = {
+          keyupCallback: updateModel,
+          keydownCallback: updateModel,
+          execCommandCallback: updateModel,
+          autosaveCallback: updateModel,
+          focusCallback: updateModel,
+          blurCallback: updateModel,
+          plugins: ['filepicker', 'fullscreen', 'fontcolor', 'fontsize', 'fontfamily', 'limiter'],
+          buttons: ['html', 'formatting', 'bold', 'italic', 'underline', 'orderedlist', 'unorderedlist', 'outdent', 'indent', 'image', 'file', 'link', 'alignment', 'horizontalrule'],
+          deniedTags: ['html', 'head', 'body', 'meta', 'applet'],
+          replaceDivs: false
+        };
+        var additionalOptions = attrs.redactor ? scope.$eval(attrs.redactor) : {};
+        var editor;
+        var $_element = angular.element(element);
 
-                    angular.extend(options, redactorOptions, additionalOptions);
+        angular.extend(options, redactorOptions, additionalOptions);
 
-                    // prevent collision with the constant values on ChangeCallback
-                    var changeCallback = additionalOptions.changeCallback || redactorOptions.changeCallback;
-                    if (changeCallback) {
-                        options.changeCallback = function(value) {
-                            updateModel.call(this, value);
-                            changeCallback.call(this, value);
-                        }
-                    }
+        // prevent collision with the constant values on ChangeCallback
+        var changeCallback = additionalOptions.changeCallback || redactorOptions.changeCallback;
+        if (changeCallback) {
+          options.changeCallback = function(value) {
+            updateModel.call(this, value);
+            changeCallback.call(this, value);
+          }
+        }
 
-                    // put in timeout to avoid $digest collision.  call render() to
-                    // set the initial value.
-                    $timeout(function() {
-                        editor = $_element.redactor(options);
-                        ngModel.$render();
-                    });
+        // put in timeout to avoid $digest collision.  call render() to
+        // set the initial value.
+        $timeout(function() {
+          editor = $_element.redactor(options);
+          ngModel.$render();
+        });
 
-                    ngModel.$render = function() {
-                        if(angular.isDefined(editor)) {
-                            $timeout(function() {
-                                $_element.redactor('code.set', ngModel.$viewValue || '');
-                                $_element.redactor('placeholder.toggle');
-                                scope.redactorLoaded = true;
-                            });
-                        }
-                    };
-                }
-            };
-        }]);
+        ngModel.$render = function() {
+          if (angular.isDefined(editor)) {
+            $timeout(function() {
+              $_element.redactor('code.set', ngModel.$viewValue || '');
+              $_element.redactor('placeholder.toggle');
+              scope.redactorLoaded = true;
+            });
+          }
+        };
+      }
+    };
+  }]);
