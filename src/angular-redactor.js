@@ -12,14 +12,18 @@ import './redactor';
 import './redactor-fullscreen';
 import './redactor-remove-formatting';
 import './redactor-filepicker';
+import './redactor-fontfamily';
+import './redactor-fontcolor';
 
 const redactorOptions = {};
-const plugins = [ 'filepicker', 'removeFormatting', 'fullscreen' ];
+const plugins = [
+  'fontcolor', 'fontfamily', 'filepicker', 'removeFormatting', 'fullscreen'
+];
 const deniedTags = [ 'html', 'head', 'body', 'meta', 'applet' ];
 const buttons = [
-  'html', 'formatting', 'bold', 'italic', 'underline', 'orderedlist',
+  'formatting', 'bold', 'italic', 'underline', 'orderedlist',
   'unorderedlist', 'outdent', 'indent', 'image', 'file', 'link',
-  'alignment', 'horizontalrule'
+  'alignment', 'horizontalrule', 'html',
 ];
 
 const redactorWrapper = ($timeout) => ({

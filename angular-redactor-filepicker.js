@@ -9816,31 +9816,29 @@
   };
 })(jQuery);
 
-// Set to true to get helpful debugging stuff logged to the console.
-const DEBUG = true;
+// TODO:
+// * add colors back in
 
-// A list of elements you shouldn't delete, since they're outer block elements.
-const BLOCK_ELEMENTS = {
-  P: true,
-  H1: true,
-  H2: true,
-  H3: true,
-  H4: true,
-  H5: true,
-  HR: true,
-  LI: true,
-  OL: true,
-  UL: true,
-  IMG: true,
-  CODE: true,
-  BLOCKQUOTE: true,
-};
+// Set to true to get helpful debugging stuff logged to the console.
+const DEBUG = false;
+
+const REPLACE_WITH_P = [ 'H1', 'H2', 'H3', 'H4', 'H5', 'HR', 'CODE', 'BLOCKQUOTE' ];
+const BLOCK_ELEMENTS = [
+  'P', 'H1', 'H2', 'H3', 'H4', 'H5', 'HR', 'LI', 'OL', 'UL', 'DIV', 'IMG',
+  'CODE', 'BLOCKQUOTE',
+];
+const REPLACE_WITH_P_MAP = {};
+const BLOCK_ELEMENTS_MAP = {};
+
+BLOCK_ELEMENTS.forEach(block => BLOCK_ELEMENTS_MAP[block] = true);
+REPLACE_WITH_P.forEach(block => REPLACE_WITH_P_MAP[block] = true);
 
 /**
+ * Tells you whether or not you should delete an element.
  * @param   {HTMLElement} current
  * @returns {Boolean}
  */
-const shouldDelete = (current) => {
+function shouldDelete(current) {
   return (
     // Make sure the element actually exists...
     current &&
@@ -9852,30 +9850,54 @@ const shouldDelete = (current) => {
     current.nodeName !== '#text' &&
 
     // ...and it's not a block element.
-    !BLOCK_ELEMENTS[current.nodeName]
+    !BLOCK_ELEMENTS_MAP[current.nodeName]
   );
-};
+}
+
+/**
+ * Give it a list of blocks and it'll replace some of them with paragraph tags.
+ *
+ * @param {Array} blocks
+ */
+function replaceBlocksWithP(blocks) {
+  if (blocks.length > 0) {
+    blocks.forEach((block) => {
+      if (!REPLACE_WITH_P_MAP[block.nodeName]) {
+        return;
+      }
+
+      const html = new String(block.innerHTML);
+
+      block.insertAdjacentHTML('afterend', `<p>${html}</p>`);
+
+      // Remove it.
+      block.parentElement.removeChild(block);
+    });
+  }
+}
 
 $.Redactor.prototype.removeFormatting = () => ({
   init() {
-    const button = this.button.add('removeFormatting', 'Clear Block Formatting');
+    const button = this.button.add('removeFormatting', 'Remove Formatting');
 
     // Add the instance to the window object for debugging.
     if (!window.r && DEBUG) {
-      console.info('Redactor instance stored on the window object as "r".');
+      console.info('Redactor instance stored as "window.r".');
       window.r = this;
     }
 
     this.button.addCallback(button, () => {
       this.inline.removeFormat();
 
-      const html = this.selection.getHtml();
-      const block = this.selection.getBlock();
+      const blocks = this.selection.getBlocks();
 
-      if (html === block.outerHTML) {
+      if (blocks.length > 1) {
+        replaceBlocksWithP(blocks);
+
         return;
       }
 
+      const html = this.selection.getHtml();
       const id = Date.now();
 
       this.selection.replaceSelection(
@@ -9888,7 +9910,7 @@ $.Redactor.prototype.removeFormatting = () => ({
 
       // Redactor doesn't do a good job of cleaning up HTML. All the code under
       // here gets rid of leftover HTML elements.
-      let current = block.querySelector(`#start-${id}`);
+      let current = this.$editor[0].querySelector(`#start-${id}`);
 
       while (shouldDelete(current)) {
         // Store a reference to the next element because we're going to remove
@@ -9901,6 +9923,8 @@ $.Redactor.prototype.removeFormatting = () => ({
         // And kick off the loop again.
         current = next;
       }
+
+      replaceBlocksWithP(this.selection.getBlocks());
     });
 
     this.button.setAwesome('removeFormatting', 'fa-remove');
@@ -9937,6 +9961,133 @@ $.Redactor.prototype.filepicker = () => ({
   }
 });
 
+(function($)
+{
+
+  $.Redactor.prototype.fontfamily = function()
+  {
+    return {
+      init: function ()
+      {
+        var fonts = [
+          'Arial',
+          'Helvetica',
+          'Georgia',
+          'Times New Roman',
+          'Monospace',
+          'Proxima',
+          'Alegreya',
+          'Lato',
+          'Lucida Sans Unicode',
+          'Merriweather',
+          'OpenSans',
+          'Palatino',
+          'Raleway',
+          'SourceSansPro'
+        ];
+        var that = this;
+        var dropdown = {};
+
+        $.each(fonts, function(i, s)
+        {
+          dropdown['s' + i] = { title: s, func: function() { that.fontfamily.set(s); }};
+        });
+
+        dropdown.remove = { title: 'Use Default Font', func: that.fontfamily.reset };
+
+        var button = this.button.add('fontfamily', 'Change Font Family');
+        this.button.addDropdown(button, dropdown);
+
+      },
+      set: function (value)
+      {
+        this.inline.format('span', 'style', 'font-family:' + value + ';');
+      },
+      reset: function()
+      {
+        this.inline.removeStyleRule('font-family');
+      }
+    };
+  };
+
+ })(jQuery);
+
+(function($)
+{
+
+  $.Redactor.prototype.fontcolor = function()
+  {
+    return {
+      init: function()
+      {
+        var colors = [
+          '#ffffff', '#000000', '#eeece1', '#1f497d', '#4f81bd', '#c0504d', '#9bbb59', '#8064a2', '#4bacc6', '#f79646', '#ffff00',
+          '#f2f2f2', '#7f7f7f', '#ddd9c3', '#c6d9f0', '#dbe5f1', '#f2dcdb', '#ebf1dd', '#e5e0ec', '#dbeef3', '#fdeada', '#fff2ca',
+          '#d8d8d8', '#595959', '#c4bd97', '#8db3e2', '#b8cce4', '#e5b9b7', '#d7e3bc', '#ccc1d9', '#b7dde8', '#fbd5b5', '#ffe694',
+          '#bfbfbf', '#3f3f3f', '#938953', '#548dd4', '#95b3d7', '#d99694', '#c3d69b', '#b2a2c7', '#b7dde8', '#fac08f', '#f2c314',
+          '#a5a5a5', '#262626', '#494429', '#17365d', '#366092', '#953734', '#76923c', '#5f497a', '#92cddc', '#e36c09', '#c09100',
+          '#7f7f7f', '#0c0c0c', '#1d1b10', '#0f243e', '#244061', '#632423', '#4f6128', '#3f3151', '#31859b',  '#974806', '#7f6000'
+        ];
+
+        var buttons = ['fontcolor', 'backcolor'];
+
+        for (var i = 0; i < 2; i++)
+        {
+          var name = buttons[i];
+
+          var button = this.button.add(name, this.lang.get(name));
+          var $dropdown = this.button.addDropdown(button);
+
+          $dropdown.width(242);
+          this.fontcolor.buildPicker($dropdown, name, colors);
+
+        }
+      },
+      buildPicker: function($dropdown, name, colors)
+      {
+        var rule = (name == 'backcolor') ? 'background-color' : 'color';
+
+        var len = colors.length;
+        var self = this;
+        var func = function(e)
+        {
+          e.preventDefault();
+          self.fontcolor.set($(this).data('rule'), $(this).attr('rel'));
+        };
+
+        for (var z = 0; z < len; z++)
+        {
+          var color = colors[z];
+
+          var $swatch = $('<a rel="' + color + '" data-rule="' + rule +'" href="#" style="float: left; font-size: 0; border: 2px solid #fff; padding: 0; margin: 0; width: 22px; height: 22px;"></a>');
+          $swatch.css('background-color', color);
+          $swatch.on('click', func);
+
+          $dropdown.append($swatch);
+        }
+
+        var $elNone = $('<a href="#" style="display: block; clear: both; padding: 5px; font-size: 12px; line-height: 1;"></a>').html(this.lang.get('none'));
+        $elNone.on('click', $.proxy(function(e)
+        {
+          e.preventDefault();
+          this.fontcolor.remove(rule);
+
+        }, this));
+
+        $dropdown.append($elNone);
+      },
+      set: function(rule, type)
+      {
+        this.inline.format('span', 'style', rule + ': ' + type + ';');
+      },
+      remove: function(rule)
+      {
+        this.inline.removeStyleRule(rule);
+      }
+    };
+  };
+ })(jQuery);
+
 /**
  * @file The Teachable text editor, which is an implementation of Redactor.
  * @see  https://imperavi.com/redactor/
@@ -9948,12 +10099,14 @@ $.Redactor.prototype.filepicker = () => ({
  */
 
 const redactorOptions = {};
-const plugins = [ 'filepicker', 'removeFormatting', 'fullscreen' ];
+const plugins = [
+  'fontcolor', 'fontfamily', 'filepicker', 'removeFormatting', 'fullscreen'
+];
 const deniedTags = [ 'html', 'head', 'body', 'meta', 'applet' ];
 const buttons = [
-  'html', 'formatting', 'bold', 'italic', 'underline', 'orderedlist',
+  'formatting', 'bold', 'italic', 'underline', 'orderedlist',
   'unorderedlist', 'outdent', 'indent', 'image', 'file', 'link',
-  'alignment', 'horizontalrule'
+  'alignment', 'horizontalrule', 'html',
 ];
 
 const redactorWrapper = ($timeout) => ({
