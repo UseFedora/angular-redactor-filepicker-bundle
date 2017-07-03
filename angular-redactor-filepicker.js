@@ -9816,13 +9816,53 @@
   };
 })(jQuery);
 
-let id = 0;
+// Set to true to get helpful debugging stuff logged to the console.
+const DEBUG = true;
+
+// A list of elements you shouldn't delete, since they're outer block elements.
+const BLOCK_ELEMENTS = {
+  P: true,
+  H1: true,
+  H2: true,
+  H3: true,
+  H4: true,
+  H5: true,
+  HR: true,
+  LI: true,
+  OL: true,
+  UL: true,
+  IMG: true,
+  CODE: true,
+  BLOCKQUOTE: true,
+};
+
+/**
+ * @param   {HTMLElement} current
+ * @returns {Boolean}
+ */
+const shouldDelete = (current) => {
+  return (
+    // Make sure the element actually exists...
+    current &&
+
+    // ...and it's empty...
+    !current.innerHTML &&
+
+    // ...and it's not a text node...
+    current.nodeName !== '#text' &&
+
+    // ...and it's not a block element.
+    !BLOCK_ELEMENTS[current.nodeName]
+  );
+};
 
 $.Redactor.prototype.removeFormatting = () => ({
   init() {
     const button = this.button.add('removeFormatting', 'Clear Block Formatting');
 
-    if (!window.r) {
+    // Add the instance to the window object for debugging.
+    if (!window.r && DEBUG) {
+      console.info('Redactor instance stored on the window object as "r".');
       window.r = this;
     }
 
@@ -9836,6 +9876,8 @@ $.Redactor.prototype.removeFormatting = () => ({
         return;
       }
 
+      const id = Date.now();
+
       this.selection.replaceSelection(
         `${html.replace(/(<([^>]+)>)/ig, '')}<span id="start-${id}"></span>`
       );
@@ -9844,17 +9886,19 @@ $.Redactor.prototype.removeFormatting = () => ({
 
       this.code.sync();
 
+      // Redactor doesn't do a good job of cleaning up HTML. All the code under
+      // here gets rid of leftover HTML elements.
       let current = block.querySelector(`#start-${id}`);
 
-      while (
-        current &&
-        current.nodeName !== '#text' &&
-        current.nodeName !== 'P'
-      ) {
+      while (shouldDelete(current)) {
+        // Store a reference to the next element because we're going to remove
+        // the current one and, thus, we'd lose the reference.
         const next = current.nextSibling;
 
+        // Remove it.
         current.parentElement.removeChild(current);
 
+        // And kick off the loop again.
         current = next;
       }
     });
@@ -9863,35 +9907,35 @@ $.Redactor.prototype.removeFormatting = () => ({
   },
 });
 
-$.Redactor.prototype.filepicker = function() {
-  return {
-    init: function() {
-      var button = this.button.add('filepicker', 'Add Image');
-      this.button.addCallback(button, this.filepicker.show);
+$.Redactor.prototype.filepicker = () => ({
+  init() {
+    const button = this.button.add('filepicker', 'Add Image');
 
-      // make your added button as Font Awesome's icon
-      this.button.setAwesome('filepicker', 'fa-image');
+    this.button.addCallback(button, this.filepicker.show);
+
+    // make your added button as Font Awesome's icon
+    this.button.setAwesome('filepicker', 'fa-image');
+  },
+
+  show() {
+    filepicker.pick(this.filepicker.insert, {
+      mimetype: 'image/*',
+      container: 'modal',
+      services: ["CUSTOMSOURCE, COMPUTER, IMAGE_SEARCH, URL, FTP, DROPBOX, GOOGLE_DRIVE, SKYDRIVE"]
     },
-    show: function() {
-      filepicker.pick(this.filepicker.insert, {
-        mimetype: 'image/*',
-        container: 'modal',
-        services: ["CUSTOMSOURCE, COMPUTER, IMAGE_SEARCH, URL, FTP, DROPBOX, GOOGLE_DRIVE, SKYDRIVE"]
-      },
-      {
-        location:"S3"
-      });
+    {
+      location:"S3"
+    });
+  },
 
-    },
-    insert: function(object) {
-      html = "<img src='" + object.url + "' class='img-responsive'>";
-      this.insert.htmlWithoutClean(html);
+  insert(object) {
+    html = `<img src=${object.url} class='img-responsive'>`;
 
-      this.code.sync();
+    this.insert.htmlWithoutClean(html);
 
-    }
-  };
-};
+    this.code.sync();
+  }
+});
 
 /**
  * @file The Teachable text editor, which is an implementation of Redactor.
@@ -9904,66 +9948,73 @@ $.Redactor.prototype.filepicker = function() {
  */
 
 const redactorOptions = {};
+const plugins = [ 'filepicker', 'removeFormatting', 'fullscreen' ];
+const deniedTags = [ 'html', 'head', 'body', 'meta', 'applet' ];
+const buttons = [
+  'html', 'formatting', 'bold', 'italic', 'underline', 'orderedlist',
+  'unorderedlist', 'outdent', 'indent', 'image', 'file', 'link',
+  'alignment', 'horizontalrule'
+];
 
-angular.module('angular-redactor-filepicker', [])
-.constant('redactorOptions', redactorOptions)
-.directive('redactor', [
-  '$timeout',
-  ($timeout) => ({
-    restrict: 'A',
-    require: 'ngModel',
-    link: (scope, element, attrs, ngModel) => {
-      // Expose scope var with loaded state of Redactor
-      scope.redactorLoaded = false;
+const redactorWrapper = ($timeout) => ({
+  restrict: 'A',
+  require: 'ngModel',
+  link: (scope, element, attrs, ngModel) => {
+    // Expose scope var with loaded state of Redactor
+    scope.redactorLoaded = false;
 
-      const updateModel = () => {
-        scope.$apply(ngModel.$setViewValue($_element.redactor('code.get')));
-      };
-      const options = {
-        keyupCallback: updateModel,
-        keydownCallback: updateModel,
-        execCommandCallback: updateModel,
-        autosaveCallback: updateModel,
-        focusCallback: updateModel,
-        blurCallback: updateModel,
-        plugins: ['filepicker', 'removeFormatting', 'fullscreen'],
-        buttons: ['html', 'formatting', 'bold', 'italic', 'underline', 'orderedlist', 'unorderedlist', 'outdent', 'indent', 'image', 'file', 'link', 'alignment', 'horizontalrule'],
-        deniedTags: ['html', 'head', 'body', 'meta', 'applet'],
-        replaceDivs: false
-      };
-      const additionalOptions = attrs.redactor ? scope.$eval(attrs.redactor) : {};
-      const $_element = angular.element(element);
-      let editor;
+    const updateModel = () => {
+      scope.$apply(ngModel.$setViewValue($_element.redactor('code.get')));
+    };
 
-      angular.extend(options, redactorOptions, additionalOptions);
+    const options = {
+      keyupCallback: updateModel,
+      keydownCallback: updateModel,
+      execCommandCallback: updateModel,
+      autosaveCallback: updateModel,
+      focusCallback: updateModel,
+      blurCallback: updateModel,
+      plugins,
+      buttons,
+      deniedTags,
+      replaceDivs: false
+    };
+    const additionalOptions = attrs.redactor ? scope.$eval(attrs.redactor) : {};
+    const $_element = angular.element(element);
+    let editor;
 
-      // prevent collision with the constant values on ChangeCallback
-      var changeCallback = additionalOptions.changeCallback || redactorOptions.changeCallback;
-      if (changeCallback) {
-        options.changeCallback = function(value) {
-          updateModel.call(this, value);
-          changeCallback.call(this, value);
-        };
-      }
+    angular.extend(options, redactorOptions, additionalOptions);
 
-      // put in timeout to avoid $digest collision.  call render() to
-      // set the initial value.
-      $timeout(function() {
-        editor = $_element.redactor(options);
-        ngModel.$render();
-      });
-
-      ngModel.$render = function() {
-        if (angular.isDefined(editor)) {
-          $timeout(function() {
-            $_element.redactor('code.set', ngModel.$viewValue || '');
-            $_element.redactor('placeholder.toggle');
-            scope.redactorLoaded = true;
-          });
-        }
+    // prevent collision with the constant values on ChangeCallback
+    var changeCallback = additionalOptions.changeCallback || redactorOptions.changeCallback;
+    if (changeCallback) {
+      options.changeCallback = function(value) {
+        updateModel.call(this, value);
+        changeCallback.call(this, value);
       };
     }
-  })
-]);
+
+    // put in timeout to avoid $digest collision.  call render() to
+    // set the initial value.
+    $timeout(function() {
+      editor = $_element.redactor(options);
+      ngModel.$render();
+    });
+
+    ngModel.$render = function() {
+      if (angular.isDefined(editor)) {
+        $timeout(function() {
+          $_element.redactor('code.set', ngModel.$viewValue || '');
+          $_element.redactor('placeholder.toggle');
+          scope.redactorLoaded = true;
+        });
+      }
+    };
+  }
+});
+
+angular.module('angular-redactor-filepicker', [])
+  .constant('redactorOptions', redactorOptions)
+  .directive('redactor', [ '$timeout', redactorWrapper ]);
 
 })));
