@@ -4,8 +4,7 @@
   $.Redactor.prototype.fontcolor = function()
   {
     return {
-      init: function()
-      {
+      init() {
         var colors = [
           '#ffffff', '#000000', '#eeece1', '#1f497d', '#4f81bd', '#c0504d', '#9bbb59', '#8064a2', '#4bacc6', '#f79646', '#ffff00',
           '#f2f2f2', '#7f7f7f', '#ddd9c3', '#c6d9f0', '#dbe5f1', '#f2dcdb', '#ebf1dd', '#e5e0ec', '#dbeef3', '#fdeada', '#fff2ca',
@@ -29,8 +28,8 @@
 
         }
       },
-      buildPicker: function($dropdown, name, colors)
-      {
+
+      buildPicker($dropdown, name, colors) {
         var rule = (name == 'backcolor') ? 'background-color' : 'color';
 
         var len = colors.length;
@@ -62,12 +61,12 @@
 
         $dropdown.append($elNone);
       },
-      set: function(rule, type)
-      {
+
+      set(rule, type) {
         this.inline.format('span', 'style', rule + ': ' + type + ';');
       },
-      remove: function(rule)
-      {
+
+      remove(rule) {
         this.inline.removeStyleRule(rule);
       }
     };

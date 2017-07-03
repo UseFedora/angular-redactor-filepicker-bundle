@@ -4275,7 +4275,7 @@
           }
 
           // Stop formatting pre and headers
-          if (this.utils.isCurrentOrParent('PRE') || this.utils.isCurrentOrParentHeader()) {
+          if (this.utils.isCurrentOrParent('PRE')) {
             return;
           }
 

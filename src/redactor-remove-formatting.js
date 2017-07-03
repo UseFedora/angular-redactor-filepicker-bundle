@@ -2,7 +2,7 @@
 // * add colors back in
 
 // Set to true to get helpful debugging stuff logged to the console.
-const DEBUG = false;
+const DEBUG = true;
 
 const REPLACE_WITH_P = [ 'H1', 'H2', 'H3', 'H4', 'H5', 'HR', 'CODE', 'BLOCKQUOTE' ];
 const BLOCK_ELEMENTS = [
@@ -56,6 +56,21 @@ function replaceBlocksWithP(blocks) {
       block.parentElement.removeChild(block);
     });
   }
+}
+
+/**
+ * Give it a list of blocks and it'll replace some of them with paragraph tags.
+ *
+ * @param {Array} blocks
+ */
+function removeAllRemoveFormattingAnchors($editor) {
+  const spans = $editor.querySelectorAll('span[class^="start-"]');
+
+  if (!spans.length) {
+    return;
+  }
+
+  Array.prototype.forEach((span) => span.parentElement.removeChild(span));
 }
 
 $.Redactor.prototype.removeFormatting = () => ({
