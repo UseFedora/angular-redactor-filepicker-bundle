@@ -1,6 +1,14 @@
 import uglify from 'rollup-plugin-uglify';
+import babel from 'rollup-plugin-babel';
 
-const plugins = [];
+const entry = './src/angular-redactor';
+const format = 'umd';
+const plugins = [
+  babel({
+    exclude: 'node_modules/**',
+  }),
+];
+
 let dest = './angular-redactor-filepicker.js';
 
 if (process.env.NODE_ENV === 'production') {
@@ -9,8 +17,8 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 export default {
-  dest: './angular-redactor-filepicker.js',
-  entry: './src/angular-redactor',
-  format: 'umd',
+  dest,
+  entry,
+  format,
   plugins,
 }
