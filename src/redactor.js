@@ -1117,7 +1117,7 @@
 
           this.code.sync();
         },
-        toggleAttr: function(attr, value)
+        toggleAttr: function(name, value)
         {
           var blocks = this.selection.getBlocks();
           $.each(blocks, function()
@@ -3734,7 +3734,7 @@
 
           // as link
           var link = $.trim($('#redactor-image-link').val());
-          var link = link.replace(/(<([^>]+)>)/ig,"");
+          link = link.replace(/(<([^>]+)>)/ig,"");
           if (link !== '')
           {
             // test url (add protocol)
@@ -3855,7 +3855,7 @@
 
           if (height < 50 || width < 100) return;
 
-          var height = Math.round(this.image.resizeHandle.el.width() / this.image.resizeHandle.ratio);
+          height = Math.round(this.image.resizeHandle.el.width() / this.image.resizeHandle.ratio);
 
           this.image.resizeHandle.el.attr({width: width, height: height});
                 this.image.resizeHandle.el.width(width);
@@ -4339,7 +4339,7 @@
 
           node = this.inline.setFormat(node);
 
-          var node = this.insert.node(node);
+          node = this.insert.node(node);
           this.caret.setEnd(node);
 
           this.code.sync();
@@ -6851,7 +6851,7 @@
         {
           if (typeof $current == 'undefined')
           {
-            var $current = $(this.selection.getCurrent());
+            $current = $(this.selection.getCurrent());
           }
 
           return $current.is($el) || $current.parents($el).length > 0;
@@ -7617,7 +7617,7 @@
         },
         setNodesMarker: function(range, node, type)
         {
-          var range = range.cloneRange();
+          range = range.cloneRange();
 
           try {
             range.collapse(type);
@@ -9015,10 +9015,6 @@
               that.progress.show();
               callback(decodeURIComponent(this.responseText));
             }
-            else if (this.readyState == 4 && this.status != 200)
-            {
-              //setProgress(0, 'Could not contact signing script. Status = ' + this.status);
-            }
           };
 
           xhr.send();
@@ -9288,7 +9284,7 @@
         {
           if (typeof element == 'undefined')
           {
-            var element = this.selection.getBlock();
+            element = this.selection.getBlock();
             if (!element) return false;
           }
 

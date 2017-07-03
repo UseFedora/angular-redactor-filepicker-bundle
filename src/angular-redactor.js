@@ -14,6 +14,7 @@ import './redactor-remove-formatting';
 import './redactor-filepicker';
 import './redactor-fontfamily';
 import './redactor-fontcolor';
+import './redactor-limiter';
 
 const redactorOptions = {};
 const plugins = [

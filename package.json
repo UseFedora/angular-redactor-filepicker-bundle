@@ -30,5 +30,8 @@
     "start": "node server",
     "watch": "rollup -w -c",
     "build": "NODE_ENV=production rollup -c"
+  },
+  "dependencies": {
+    "rollup-plugin-closure-compiler-js": "^1.0.4"
   }
 }

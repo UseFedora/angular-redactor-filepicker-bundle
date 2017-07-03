@@ -3107,7 +3107,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           // as link
           var link = $.trim($('#redactor-image-link').val());
-          var link = link.replace(/(<([^>]+)>)/ig, "");
+          link = link.replace(/(<([^>]+)>)/ig, "");
           if (link !== '') {
             // test url (add protocol)
             var pattern = '((xn--)?[a-z0-9]+(-[a-z0-9]+)*\\.)+[a-z]{2,}';

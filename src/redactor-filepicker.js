@@ -20,7 +20,7 @@ $.Redactor.prototype.filepicker = () => ({
   },
 
   insert(object) {
-    html = `<img src=${object.url} class='img-responsive'>`;
+    const html = `<img src=${object.url} class='img-responsive'>`;
 
     this.insert.htmlWithoutClean(html);
 

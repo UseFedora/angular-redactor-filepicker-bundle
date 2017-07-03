@@ -2,7 +2,7 @@ import uglify from 'rollup-plugin-uglify';
 import babel from 'rollup-plugin-babel';
 
 const entry = './src/angular-redactor';
-const format = 'umd';
+const format = 'es';
 const plugins = [
   babel({
     exclude: 'node_modules/**',
