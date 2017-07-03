@@ -20,14 +20,16 @@ angular.module('app')
       $scope.content = `
       <h1>I'm better than your brother.</h1>
 
-      <pre>I'm a version of your brother you can trust when he says "Don't run";</pre>
+      <pre>I'm a version of your brother you can trust when he says "Don't run."</pre>
 
       <ol>
       	<li>Nobody</li>
       	<li>Exists</li>
       	<li>On</li>
-        <li>Purpose</li>
+      	<li>Purpose</li>
       </ol>
+
+      <hr>
 
       <ul>
       	<li>Nobody</li>
@@ -36,11 +38,11 @@ angular.module('app')
       </ul>
 
       <p>
-        <span style="color: rgb(192, 80, 77);"><strong><em><u>Everybody's gonna die</u></em></strong></span>
+      	<span style="color: rgb(192, 80, 77);"><strong><em><u>Everybody's gonna die</u></em></strong></span>
       </p>
 
       <blockquote>
-        <a href="http://google.com">Come watch TV.</a>
+      	<a href="http://google.com">Come watch TV</a>
       </blockquote>
       `;
     }]);
