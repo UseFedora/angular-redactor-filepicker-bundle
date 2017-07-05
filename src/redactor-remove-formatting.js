@@ -4,19 +4,29 @@
 // Set to true to get helpful debugging stuff logged to the console.
 const DEBUG = true;
 
-const REPLACE_WITH_P = [ 'H1', 'H2', 'H3', 'H4', 'H5', 'HR', 'CODE', 'BLOCKQUOTE' ];
+const REPLACE_WITH_P = [
+  'H1', 'H2', 'H3', 'H4', 'H5', 'HR', 'CODE', 'BLOCKQUOTE', 'CODE', 'PRE', 'LI',
+];
+
+const REMOVE = [ 'HR', 'OL', 'UL', 'A' ];
+
 const BLOCK_ELEMENTS = [
   'P', 'H1', 'H2', 'H3', 'H4', 'H5', 'HR', 'LI', 'OL', 'UL', 'DIV', 'IMG',
   'CODE', 'BLOCKQUOTE',
 ];
-const REPLACE_WITH_P_MAP = {};
-const BLOCK_ELEMENTS_MAP = {};
 
-BLOCK_ELEMENTS.forEach(block => BLOCK_ELEMENTS_MAP[block] = true);
+const REPLACE_WITH_P_MAP = {};
 REPLACE_WITH_P.forEach(block => REPLACE_WITH_P_MAP[block] = true);
+
+const BLOCK_ELEMENTS_MAP = {};
+BLOCK_ELEMENTS.forEach(block => BLOCK_ELEMENTS_MAP[block] = true);
+
+const REMOVE_MAP = {};
+REMOVE.forEach(block => REMOVE_MAP[block] = true);
 
 /**
  * Tells you whether or not you should delete an element.
+ *
  * @param   {HTMLElement} current
  * @returns {Boolean}
  */
@@ -41,21 +51,42 @@ function shouldDelete(current) {
  *
  * @param {Array} blocks
  */
-function replaceBlocksWithP(blocks) {
+function replaceBlocks(blocks) {
   if (blocks.length > 0) {
     blocks.forEach((block) => {
       if (!REPLACE_WITH_P_MAP[block.nodeName]) {
         return;
       }
 
-      const html = new String(block.innerHTML);
+      block.insertAdjacentHTML('afterend', `<p>${block.innerHTML}</p>`);
 
-      block.insertAdjacentHTML('afterend', `<p>${html}</p>`);
-
-      // Remove it.
       block.parentElement.removeChild(block);
     });
   }
+}
+
+function removeBlocks() {
+  this.selection.replaceSelection(`
+    <div id="removeBlocks">${this.selection.getHtml()}</div>
+  `);
+
+  const div = document.getElementById('removeBlocks');
+
+  REMOVE.forEach((type) => {
+    const els = div.querySelectorAll(type.toLowerCase());
+
+    Array.prototype.forEach.call(els, (el) => {
+      const html = el.innerHTML;
+
+      el.insertAdjacentHTML('afterend', html);
+
+      el.parentElement.removeChild(el);
+    })
+  });
+
+  div.insertAdjacentHTML('beforebegin', div.innerHTML);
+
+  div.parentElement.removeChild(div);
 }
 
 /**
@@ -79,7 +110,7 @@ $.Redactor.prototype.removeFormatting = () => ({
 
     // Add the instance to the window object for debugging.
     if (!window.r && DEBUG) {
-      console.info('Redactor instance stored as "window.r".')
+      console.info('Redactor instance stored as "window.r" for debugging.');
       window.r = this;
     }
 
@@ -89,7 +120,9 @@ $.Redactor.prototype.removeFormatting = () => ({
       const blocks = this.selection.getBlocks();
 
       if (blocks.length > 1) {
-        replaceBlocksWithP(blocks);
+        replaceBlocks(blocks);
+
+        removeBlocks.call(this);
 
         return;
       }
@@ -121,7 +154,12 @@ $.Redactor.prototype.removeFormatting = () => ({
         current = next;
       }
 
-      replaceBlocksWithP(this.selection.getBlocks());
+      replaceBlocks(this.selection.getBlocks());
+
+      // Make sure this goes last.
+      setTimeout(() => {
+        removeBlocks.call(this);
+      }, 0);
     });
 
     this.button.setAwesome('removeFormatting', 'fa-remove');

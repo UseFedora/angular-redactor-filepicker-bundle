@@ -1,9 +1,3 @@
-(function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? factory() :
-	typeof define === 'function' && define.amd ? define(factory) :
-	(factory());
-}(this, (function () { 'use strict';
-
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
   return typeof obj;
 } : function (obj) {
@@ -932,7 +926,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           this.code.sync();
         },
-        toggleAttr: function toggleAttr(attr, value) {
+        toggleAttr: function toggleAttr(name, value) {
           var blocks = this.selection.getBlocks();
           $.each(blocks, function () {
             if ($(this).attr(name)) {
@@ -3202,7 +3196,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           if (height < 50 || width < 100) return;
 
-          var height = Math.round(this.image.resizeHandle.el.width() / this.image.resizeHandle.ratio);
+          height = Math.round(this.image.resizeHandle.el.width() / this.image.resizeHandle.ratio);
 
           this.image.resizeHandle.el.attr({ width: width, height: height });
           this.image.resizeHandle.el.width(width);
@@ -3595,7 +3589,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           node = this.inline.setFormat(node);
 
-          var node = this.insert.node(node);
+          node = this.insert.node(node);
           this.caret.setEnd(node);
 
           this.code.sync();
@@ -5630,7 +5624,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         },
         isCurrent: function isCurrent($el, $current) {
           if (typeof $current == 'undefined') {
-            var $current = $(this.selection.getCurrent());
+            $current = $(this.selection.getCurrent());
           }
 
           return $current.is($el) || $current.parents($el).length > 0;
@@ -6243,7 +6237,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           return $('<span id="nodes-marker-' + num + '" class="redactor-nodes-marker" data-verified="redactor">' + this.opts.invisibleSpace + '</span>')[0];
         },
         setNodesMarker: function setNodesMarker(range, node, type) {
-          var range = range.cloneRange();
+          range = range.cloneRange();
 
           try {
             range.collapse(type);
@@ -7370,8 +7364,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             if (this.readyState == 4 && this.status == 200) {
               that.progress.show();
               callback(decodeURIComponent(this.responseText));
-            } else if (this.readyState == 4 && this.status != 200) {
-              //setProgress(0, 'Could not contact signing script. Status = ' + this.status);
             }
           };
 
@@ -7592,7 +7584,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         },
         isEndOfElement: function isEndOfElement(element) {
           if (typeof element == 'undefined') {
-            var element = this.selection.getBlock();
+            element = this.selection.getBlock();
             if (!element) return false;
           }
 
@@ -8027,120 +8019,117 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   };
 })(jQuery);
 
-// TODO:
-// * add colors back in
+var NAME = 'removeFormatting';
+var TAGS_TO_TRANSFORM_MAP = {};
+var TAGS_TO_TRANSFORM = ['H1', 'H2', 'H3', 'H4', 'H5', 'HR', 'LI', 'PRE', 'CODE', 'BLOCKQUOTE'];
 
-// Set to true to get helpful debugging stuff logged to the console.
-var DEBUG = true;
-
-var REPLACE_WITH_P = ['H1', 'H2', 'H3', 'H4', 'H5', 'HR', 'CODE', 'BLOCKQUOTE'];
-var BLOCK_ELEMENTS = ['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'HR', 'LI', 'OL', 'UL', 'DIV', 'IMG', 'CODE', 'BLOCKQUOTE'];
-var REPLACE_WITH_P_MAP = {};
-var BLOCK_ELEMENTS_MAP = {};
-
-BLOCK_ELEMENTS.forEach(function (block) {
-  return BLOCK_ELEMENTS_MAP[block] = true;
-});
-REPLACE_WITH_P.forEach(function (block) {
-  return REPLACE_WITH_P_MAP[block] = true;
+TAGS_TO_TRANSFORM.forEach(function (tag) {
+  return TAGS_TO_TRANSFORM_MAP[tag] = true;
 });
 
 /**
- * Tells you whether or not you should delete an element.
- * @param   {HTMLElement} current
- * @returns {Boolean}
+ * Deletes an HTMLElement from the page, also deletes innerHTML.
+ *
+ * @param {HTMLElement}
  */
-function shouldDelete(current) {
-  return (
-    // Make sure the element actually exists...
-    current &&
+function deleteHTMLElement($element) {
+  if (!$element.parentElement) {
+    return;
+  }
 
-    // ...and it's empty...
-    !current.innerHTML &&
-
-    // ...and it's not a text node...
-    current.nodeName !== '#text' &&
-
-    // ...and it's not a block element.
-    !BLOCK_ELEMENTS_MAP[current.nodeName]
-  );
+  $element.parentNode.removeChild($element);
 }
 
 /**
- * Give it a list of blocks and it'll replace some of them with paragraph tags.
+ * Deletes an HTMLElement from the page but maintains the innerHTML.
  *
- * @param {Array} blocks
+ * @param {HTMLElement}
  */
-function replaceBlocksWithP(blocks) {
-  if (blocks.length > 0) {
-    blocks.forEach(function (block) {
-      if (!REPLACE_WITH_P_MAP[block.nodeName]) {
-        return;
-      }
-
-      var html = new String(block.innerHTML);
-
-      block.insertAdjacentHTML('afterend', '<p>' + html + '</p>');
-
-      // Remove it.
-      block.parentElement.removeChild(block);
-    });
+function removeOuterTag(element) {
+  if (!!element.innerHTML) {
+    element.insertAdjacentHTML('beforebegin', element.innerHTML);
   }
+
+  deleteHTMLElement(element);
+}
+
+/**
+ * @param   {String}  nodeName
+ * @returns {Boolean}
+ */
+function shouldRemove(nodeName) {
+  return !TAGS_TO_TRANSFORM_MAP[nodeName] && nodeName !== 'P';
+}
+
+/**
+ * @param   {String}  nodeName
+ * @returns {Boolean}
+ */
+function shouldTransform(nodeName) {
+  return TAGS_TO_TRANSFORM_MAP[nodeName];
+}
+
+/**
+ * Deletes an HTMLElement from the page but maintains the innerHTML.
+ *
+ * @param {HTMLElement}
+ */
+function transformOuterTag(element, type) {
+  var html = '<' + type + '>' + element.innerHTML + '</' + type + '>';
+
+  element.insertAdjacentHTML('beforebegin', html);
+
+  deleteHTMLElement(element);
+}
+
+/**
+ * The function that runs when you click the remove formatting button.
+ *
+ * NOTE: "this" is the redactor instance.
+ */
+function handleRemoveFormatting() {
+  this.inline.removeFormat();
+
+  var className = NAME + '-' + Date.now();
+  var html = '<span class="' + className + '">' + this.selection.getHtml() + '</span>';
+
+  this.selection.replaceWithHtml(html);
+
+  var $marker = document.querySelector('.' + className);
+  var $els = $marker.querySelectorAll('*');
+  var $allElsInEditor = this.$editor[0].querySelectorAll('*');
+
+  Array.prototype.forEach.call($els, function ($el) {
+    if (shouldTransform($el.nodeName)) {
+      transformOuterTag($el, 'p');
+    }
+  });
+
+  Array.prototype.forEach.call($els, function ($el) {
+    if (shouldRemove($el.nodeName)) {
+      removeOuterTag($el, 'p');
+    }
+  });
+
+  Array.prototype.forEach.call($allElsInEditor, function ($el) {
+    if (!$el.innerHTML) {
+      removeOuterTag($el);
+    }
+  });
+
+  removeOuterTag($marker);
+
+  this.buffer.set();
+
+  this.code.sync();
 }
 
 $.Redactor.prototype.removeFormatting = function () {
   return {
     init: function init() {
-      var _this = this;
-
       var button = this.button.add('removeFormatting', 'Remove Formatting');
 
-      // Add the instance to the window object for debugging.
-      if (!window.r && DEBUG) {
-        console.info('Redactor instance stored as "window.r".');
-        window.r = this;
-      }
-
-      this.button.addCallback(button, function () {
-        _this.inline.removeFormat();
-
-        var blocks = _this.selection.getBlocks();
-
-        if (blocks.length > 1) {
-          replaceBlocksWithP(blocks);
-
-          return;
-        }
-
-        var html = _this.selection.getHtml();
-        var id = Date.now();
-
-        _this.selection.replaceSelection(html.replace(/(<([^>]+)>)/ig, '') + '<span id="start-' + id + '"></span>');
-
-        _this.buffer.set();
-
-        _this.code.sync();
-
-        // Redactor doesn't do a good job of cleaning up HTML. All the code under
-        // here gets rid of leftover HTML elements.
-        var current = _this.$editor[0].querySelector('#start-' + id);
-
-        while (shouldDelete(current)) {
-          // Store a reference to the next element because we're going to remove
-          // the current one and, thus, we'd lose the reference.
-          var next = current.nextSibling;
-
-          // Remove it.
-          current.parentElement.removeChild(current);
-
-          // And kick off the loop again.
-          current = next;
-        }
-
-        replaceBlocksWithP(_this.selection.getBlocks());
-      });
-
-      this.button.setAwesome('removeFormatting', 'fa-remove');
+      this.button.addCallback(button, handleRemoveFormatting);
     }
   };
 };
@@ -8165,7 +8154,7 @@ $.Redactor.prototype.filepicker = function () {
       });
     },
     insert: function insert(object) {
-      html = '<img src=' + object.url + ' class=\'img-responsive\'>';
+      var html = '<img src=' + object.url + ' class=\'img-responsive\'>';
 
       this.insert.htmlWithoutClean(html);
 
@@ -8261,6 +8250,35 @@ $.Redactor.prototype.filepicker = function () {
   };
 })(jQuery);
 
+(function ($) {
+	$.Redactor.prototype.limiter = function () {
+		return {
+			init: function init() {
+				if (!this.opts.limiter) {
+					return;
+				}
+
+				this.core.editor().on('keydown.redactor-plugin-limiter', $.proxy(function (e) {
+					var key = e.which;
+					var ctrl = e.ctrlKey || e.metaKey;
+
+					if (key === this.keyCode.BACKSPACE || key === this.keyCode.DELETE || key === this.keyCode.ESC || key === this.keyCode.SHIFT || ctrl && key === 65 || ctrl && key === 82 || ctrl && key === 116) {
+						return;
+					}
+
+					var text = this.core.editor().text();
+					text = text.replace(/\u200B/g, '');
+
+					var count = text.length;
+					if (count >= this.opts.limiter) {
+						return false;
+					}
+				}, this));
+			}
+		};
+	};
+})(jQuery);
+
 /**
  * @file The Teachable text editor, which is an implementation of Redactor.
  * @see  https://imperavi.com/redactor/
@@ -8274,7 +8292,7 @@ $.Redactor.prototype.filepicker = function () {
 var redactorOptions = {};
 var plugins = ['fontcolor', 'fontfamily', 'filepicker', 'removeFormatting', 'fullscreen'];
 var deniedTags = ['html', 'head', 'body', 'meta', 'applet'];
-var buttons = ['formatting', 'bold', 'italic', 'underline', 'orderedlist', 'unorderedlist', 'outdent', 'indent', 'image', 'file', 'link', 'alignment', 'horizontalrule', 'html'];
+var buttons = ['html', 'formatting', 'bold', 'italic', 'underline', 'orderedlist', 'unorderedlist', 'outdent', 'indent', 'image', 'file', 'link', 'alignment', 'horizontalrule'];
 
 var redactorWrapper = function redactorWrapper($timeout) {
   return {
@@ -8336,5 +8354,3 @@ var redactorWrapper = function redactorWrapper($timeout) {
 };
 
 angular.module('angular-redactor-filepicker', []).constant('redactorOptions', redactorOptions).directive('redactor', ['$timeout', redactorWrapper]);
-
-})));

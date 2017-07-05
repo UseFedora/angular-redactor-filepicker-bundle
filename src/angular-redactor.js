@@ -10,7 +10,7 @@
 
 import './redactor';
 import './redactor-fullscreen';
-import './redactor-remove-formatting';
+import './redactor-remove-formatting-2';
 import './redactor-filepicker';
 import './redactor-fontfamily';
 import './redactor-fontcolor';
@@ -22,9 +22,9 @@ const plugins = [
 ];
 const deniedTags = [ 'html', 'head', 'body', 'meta', 'applet' ];
 const buttons = [
-  'formatting', 'bold', 'italic', 'underline', 'orderedlist',
+  'html', 'formatting', 'bold', 'italic', 'underline', 'orderedlist',
   'unorderedlist', 'outdent', 'indent', 'image', 'file', 'link',
-  'alignment', 'horizontalrule', 'html',
+  'alignment', 'horizontalrule',
 ];
 
 const redactorWrapper = ($timeout) => ({
