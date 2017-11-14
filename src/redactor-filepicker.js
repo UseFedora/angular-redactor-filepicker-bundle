@@ -8,10 +8,19 @@ $.Redactor.prototype.filepicker = function() {
       this.button.setAwesome('filepicker', 'fa-image');
     },
     show: function() {
-      filepicker.pick(this.filepicker.insert, {
+      filepicker.pick({
         mimetype: 'image/*',
         container: 'modal',
-        services: ["CUSTOMSOURCE, COMPUTER, IMAGE_SEARCH, URL, FTP, DROPBOX, GOOGLE_DRIVE, SKYDRIVE"]
+        services: [
+          "COMPUTER",
+          "CUSTOMSOURCE",
+          "DROPBOX",
+          "FTP",
+          "GOOGLE_DRIVE",
+          "IMAGE_SEARCH",
+          "SKYDRIVE",
+          "URL",
+        ],
       },
       {
         location:"S3"
