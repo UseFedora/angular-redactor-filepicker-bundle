@@ -37,5 +37,5 @@ $.Redactor.prototype.filepicker = function() {
 
       this.code.sync()
     },
-  },
+  }
 }

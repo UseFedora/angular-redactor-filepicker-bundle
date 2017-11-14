@@ -21,6 +21,8 @@ const plugins = [
   'fontfamily',
   'filepicker',
   'fullscreen',
+  'fontsize',
+  'limiter',
 ];
 const deniedTags = [
   'html',

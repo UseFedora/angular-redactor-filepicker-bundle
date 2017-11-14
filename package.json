@@ -22,18 +22,19 @@
     "gulp-concat": "^2.6.0",
     "gulp-watch": "^4.3.11",
     "rollup": "^0.43.0",
-    "rollup-plugin-babel": "^2.7.1",
+    "rollup-plugin-babel": "^3.0.2",
+    "rollup-plugin-closure-compiler-js": "^1.0.4",
     "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-plugin-uglify": "^2.0.1",
-    "rollup-plugin-closure-compiler-js": "^1.0.4",
     "rollup-watch": "^4.0.0"
   },
   "scripts": {
     "start": "node server",
-    "watch": "rollup -w -c",
+    "watch": "rollup --config rollup.config.js --watch",
     "build": "NODE_ENV=production rollup -c"
   },
   "dependencies": {
+    "babel-core": "^6.26.0",
     "filepicker-js": "^2.4.18"
   }
 }
