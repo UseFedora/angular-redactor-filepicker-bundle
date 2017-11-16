@@ -17,7 +17,6 @@ $.Redactor.prototype.filepicker = () => ({
           "COMPUTER",
           "IMAGE_SEARCH",
           "URL",
-          "FTP",
           "DROPBOX",
           "GOOGLE_DRIVE",
           "SKYDRIVE",
@@ -29,6 +28,7 @@ $.Redactor.prototype.filepicker = () => ({
       this.filepicker.insert,
     )
   },
+
   insert(files) {
     const insert = (file) => {
       this.insert.htmlWithoutClean(`<img src=${file.url} class='img-responsive'>`)

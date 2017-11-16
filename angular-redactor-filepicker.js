@@ -8028,11 +8028,12 @@ $.Redactor.prototype.filepicker = () => ({
     filepicker.pickAndStore({
       mimetype: 'image/*',
       container: 'modal',
-      services: ["CUSTOMSOURCE", "COMPUTER", "IMAGE_SEARCH", "URL", "FTP", "DROPBOX", "GOOGLE_DRIVE", "SKYDRIVE"]
+      services: ["CUSTOMSOURCE", "COMPUTER", "IMAGE_SEARCH", "URL", "DROPBOX", "GOOGLE_DRIVE", "SKYDRIVE"]
     }, {
       location: "S3"
     }, this.filepicker.insert);
   },
+
   insert(files) {
     const insert = file => {
       this.insert.htmlWithoutClean(`<img src=${file.url} class='img-responsive'>`);
