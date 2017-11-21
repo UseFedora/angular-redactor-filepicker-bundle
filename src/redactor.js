@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*
   Redactor 10.2.5
   Updated: October 1, 2015

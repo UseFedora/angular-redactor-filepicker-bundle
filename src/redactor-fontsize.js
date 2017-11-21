@@ -1,33 +1,35 @@
-  (function($)
-{
+/* globals $ */
 
-  $.Redactor.prototype.fontsize = function()
-  {
-    return {
-      init: function()
-      {
-        var fonts = [10, 11, 12, 14, 16, 18, 20, 24, 28, 30];
-        var that = this;
-        var dropdown = {};
+const fonts = [10, 11, 12, 14, 16, 18, 20, 24, 28, 30];
 
-        $.each(fonts, function(i, s)
-        {
-          dropdown['s' + i] = { title: s + 'px', func: function() { that.fontsize.set(s); } };
-        });
+$.Redactor.prototype.fontsize = () => ({
+  init() {
+    const dropdown = {};
 
-        dropdown.remove = { title: 'Remove Font Size', func: that.fontsize.reset };
+    fonts.forEach((s, i) => {
+      dropdown[`s${i}`] = {
+        title: `${s}px`,
+        func: () => {
+          this.fontsize.set(s);
+        },
+      };
+    });
 
-        var button = this.button.add('fontsize', 'Change Font Size');
-        this.button.addDropdown(button, dropdown);
-      },
-      set: function(size)
-      {
-        this.inline.format('span', 'style', 'font-size: ' + size + 'px;');
-      },
-      reset: function()
-      {
-        this.inline.removeStyleRule('font-size');
-      }
+    dropdown.remove = {
+      title: 'Remove Font Size',
+      func: this.fontsize.reset,
     };
-  };
-})(jQuery);
+
+    const button = this.button.add('fontsize', 'Change Font Size');
+
+    this.button.addDropdown(button, dropdown);
+  },
+
+  set(size) {
+    this.inline.format('span', 'style', `font-size: ${size}px;`);
+  },
+
+  reset() {
+    this.inline.removeStyleRule('font-size');
+  },
+});

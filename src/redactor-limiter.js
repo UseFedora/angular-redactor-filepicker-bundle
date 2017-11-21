@@ -1,45 +1,38 @@
-(function($)
-{
-	$.Redactor.prototype.limiter = function()
-	{
-		return {
-			init: function()
-			{
-				if (!this.opts.limiter)
-				{
-					return;
-				}
+/* globals jQuery */
 
-				this.core.editor().on('keydown.redactor-plugin-limiter', $.proxy(function(e)
-				{
-					var key = e.which;
-					var ctrl = e.ctrlKey || e.metaKey;
+const $ = jQuery;
 
-					if (key === this.keyCode.BACKSPACE
-					   	|| key === this.keyCode.DELETE
-					    || key === this.keyCode.ESC
-					    || key === this.keyCode.SHIFT
-					    || (ctrl && key === 65)
-					    || (ctrl && key === 82)
-					    || (ctrl && key === 116)
-					)
-					{
-						return;
-					}
+$.Redactor.prototype.limiter = () => ({
+  init() {
+    if (!this.opts.limiter) {
+      return;
+    }
 
-					var text = this.core.editor().text();
-					text = text.replace(/\u200B/g, '');
+    this.core.editor().on('keydown.redactor-plugin-limiter', $.proxy((e) => {
+      const key = e.which;
+      const ctrl = e.ctrlKey || e.metaKey;
 
-					var count = text.length;
-					if (count >= this.opts.limiter)
-					{
-						return false;
-					}
+      if (
+        key === this.keyCode.BACKSPACE ||
+        key === this.keyCode.DELETE ||
+        key === this.keyCode.ESC ||
+        key === this.keyCode.SHIFT ||
+        (ctrl && key === 65) ||
+        (ctrl && key === 82) ||
+        (ctrl && key === 116)
+      ) {
+        /* eslint consistent-return: 0 */
+        return;
+      }
 
+      let text = this.core.editor().text();
+      text = text.replace(/\u200B/g, '');
 
-				}, this));
+      const count = text.length;
 
-			}
-		};
-	};
-})(jQuery);
+      if (count >= this.opts.limiter) {
+        return false;
+      }
+    }, this));
+  },
+});

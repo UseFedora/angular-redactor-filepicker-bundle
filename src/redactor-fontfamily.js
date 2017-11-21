@@ -1,50 +1,50 @@
-(function($)
-{
+/* globals $ */
 
-  $.Redactor.prototype.fontfamily = function()
-  {
-    return {
-      init: function ()
-      {
-        var fonts = [
-          'Arial',
-          'Helvetica',
-          'Georgia',
-          'Times New Roman',
-          'Monospace',
-          'Proxima',
-          'Alegreya',
-          'Lato',
-          'Lucida Sans Unicode',
-          'Merriweather',
-          'OpenSans',
-          'Palatino',
-          'Raleway',
-          'SourceSansPro'
-        ];
-        var that = this;
-        var dropdown = {};
+const fonts = [
+  'Arial',
+  'Helvetica',
+  'Georgia',
+  'Times New Roman',
+  'Monospace',
+  'Proxima',
+  'Alegreya',
+  'Lato',
+  'Lucida Sans Unicode',
+  'Merriweather',
+  'OpenSans',
+  'Palatino',
+  'Raleway',
+  'SourceSansPro',
+];
 
-        $.each(fonts, function(i, s)
-        {
-          dropdown['s' + i] = { title: s, func: function() { that.fontfamily.set(s); }};
-        });
+$.Redactor.prototype.fontfamily = () => ({
+  init() {
+    const dropdown = {};
 
-        dropdown.remove = { title: 'Use Default Font', func: that.fontfamily.reset };
+    fonts.forEach((s, i) => {
+      dropdown[`s${i}`] = {
+        title: s,
+        func: () => {
+          this.fontfamily.set(s);
+        },
+      };
+    });
 
-        var button = this.button.add('fontfamily', 'Change Font Family');
-        this.button.addDropdown(button, dropdown);
-
-      },
-      set: function (value)
-      {
-        this.inline.format('span', 'style', 'font-family:' + value + ';');
-      },
-      reset: function()
-      {
-        this.inline.removeStyleRule('font-family');
-      }
+    dropdown.remove = {
+      title: 'Use Default Font',
+      func: this.fontfamily.reset,
     };
-  };
 
- })(jQuery);
+    const button = this.button.add('fontfamily', 'Change Font Family');
+
+    this.button.addDropdown(button, dropdown);
+  },
+
+  set(value) {
+    this.inline.format('span', 'style', `font-family: ${value};`);
+  },
+
+  reset() {
+    this.inline.removeStyleRule('font-family');
+  },
+});

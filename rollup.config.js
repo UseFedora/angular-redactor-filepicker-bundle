@@ -1,10 +1,12 @@
-import uglify from 'rollup-plugin-uglify';
 import babel from 'rollup-plugin-babel';
+import eslint from 'rollup-plugin-eslint';
 import resolve from 'rollup-plugin-node-resolve';
+import uglify from 'rollup-plugin-uglify';
 
 const entry = './src/angular-redactor';
 const format = 'es';
 const plugins = [
+  eslint(),
   babel({
     exclude: 'node_modules/**',
   }),
