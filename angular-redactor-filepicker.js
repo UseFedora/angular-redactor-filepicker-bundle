@@ -8015,39 +8015,41 @@
   };
 })(jQuery);
 
-$.Redactor.prototype.filepicker = () => ({
-  init() {
-    var button = this.button.add('filepicker', 'Add Image');
-    this.button.addCallback(button, this.filepicker.show);
+$.Redactor.prototype.filepicker = function () {
+  return {
+    init: function () {
+      var button = this.button.add('filepicker', 'Add Image');
+      this.button.addCallback(button, this.filepicker.show);
 
-    // make your added button as Font Awesome's icon
-    this.button.setAwesome('filepicker', 'fa-image');
-  },
+      // make your added button as Font Awesome's icon
+      this.button.setAwesome('filepicker', 'fa-image');
+    },
 
-  show() {
-    filepicker.pickAndStore({
-      mimetype: 'image/*',
-      container: 'modal',
-      services: ["CUSTOMSOURCE", "COMPUTER", "IMAGE_SEARCH", "URL", "DROPBOX", "GOOGLE_DRIVE", "SKYDRIVE"]
-    }, {
-      location: "S3"
-    }, this.filepicker.insert);
-  },
+    show: function () {
+      filepicker.pickAndStore({
+        mimetype: 'image/*',
+        container: 'modal',
+        services: ['CUSTOMSOURCE', 'COMPUTER', 'IMAGE_SEARCH', 'URL', 'DROPBOX', 'GOOGLE_DRIVE', 'SKYDRIVE']
+      }, {
+        location: 'S3'
+      }, this.filepicker.insert);
+    },
 
-  insert(files) {
-    const insert = file => {
-      this.insert.htmlWithoutClean(`<img src=${file.url} class='img-responsive'>`);
-    };
+    insert: function (files) {
+      var insert = function (file) {
+        this.insert.htmlWithoutClean('<img src=' + file.url + "class='img-responsive'>");
+      };
 
-    if (files.length) {
-      files.forEach(insert);
-    } else if (files.url) {
-      insert(files);
+      if (files.length) {
+        files.forEach(insert);
+      } else if (files.url) {
+        insert(files);
+      }
+
+      this.code.sync();
     }
-
-    this.code.sync();
-  }
-});
+  };
+};
 
 (function ($) {
 
@@ -8175,66 +8177,68 @@ $.Redactor.prototype.filepicker = () => ({
  * - redactor: object (pass in a redactor configuration object)
  */
 
-const redactorOptions = {};
-const plugins = ['fontcolor', 'fontfamily', 'filepicker', 'removeFormatting', 'fullscreen'];
-const deniedTags = ['html', 'head', 'body', 'meta', 'applet'];
-const buttons = ['html', 'formatting', 'bold', 'italic', 'underline', 'orderedlist', 'unorderedlist', 'outdent', 'indent', 'image', 'file', 'link', 'alignment', 'horizontalrule'];
+var redactorOptions = {};
+var plugins = ['fontcolor', 'fontfamily', 'filepicker', 'removeFormatting', 'fullscreen'];
+var deniedTags = ['html', 'head', 'body', 'meta', 'applet'];
+var buttons = ['html', 'formatting', 'bold', 'italic', 'underline', 'orderedlist', 'unorderedlist', 'outdent', 'indent', 'image', 'file', 'link', 'alignment', 'horizontalrule'];
 
-const redactorWrapper = $timeout => ({
-  restrict: 'A',
-  require: 'ngModel',
-  link: (scope, element, attrs, ngModel) => {
-    // Expose scope var with loaded state of Redactor
-    scope.redactorLoaded = false;
+var redactorWrapper = function ($timeout) {
+  return {
+    restrict: 'A',
+    require: 'ngModel',
+    link: function (scope, element, attrs, ngModel) {
+      // Expose scope var with loaded state of Redactor
+      scope.redactorLoaded = false;
 
-    const updateModel = () => {
-      scope.$apply(ngModel.$setViewValue($_element.redactor('code.get')));
-    };
+      var updateModel = function () {
+        scope.$apply(ngModel.$setViewValue($_element.redactor('code.get')));
+      };
 
-    const options = {
-      keyupCallback: updateModel,
-      keydownCallback: updateModel,
-      execCommandCallback: updateModel,
-      autosaveCallback: updateModel,
-      focusCallback: updateModel,
-      blurCallback: updateModel,
-      plugins,
-      buttons,
-      deniedTags,
-      replaceDivs: false
-    };
-    const additionalOptions = attrs.redactor ? scope.$eval(attrs.redactor) : {};
-    const $_element = angular.element(element);
-    let editor;
+      var options = {
+        keyupCallback: updateModel,
+        keydownCallback: updateModel,
+        execCommandCallback: updateModel,
+        autosaveCallback: updateModel,
+        focusCallback: updateModel,
+        blurCallback: updateModel,
+        plugins: plugins,
+        buttons: buttons,
+        deniedTags: deniedTags,
+        replaceDivs: false
+      };
+      var additionalOptions = attrs.redactor ? scope.$eval(attrs.redactor) : {};
+      var $_element = angular.element(element);
+      var editor;
 
-    angular.extend(options, redactorOptions, additionalOptions);
+      angular.extend(options, redactorOptions, additionalOptions);
 
-    // prevent collision with the constant values on ChangeCallback
-    var changeCallback = additionalOptions.changeCallback || redactorOptions.changeCallback;
-    if (changeCallback) {
-      options.changeCallback = function (value) {
-        updateModel.call(this, value);
-        changeCallback.call(this, value);
+      // prevent collision with the varant values on ChangeCallback
+      var changeCallback = additionalOptions.changeCallback || redactorOptions.changeCallback;
+      if (changeCallback) {
+        options.changeCallback = function (value) {
+          updateModel.call(this, value);
+          changeCallback.call(this, value);
+        };
+      }
+
+      // put in timeout to avoid $digest collision.  call render() to
+      // set the initial value.
+      $timeout(function () {
+        editor = $_element.redactor(options);
+        ngModel.$render();
+      });
+
+      ngModel.$render = function () {
+        if (angular.isDefined(editor)) {
+          $timeout(function () {
+            $_element.redactor('code.set', ngModel.$viewValue || '');
+            $_element.redactor('placeholder.toggle');
+            scope.redactorLoaded = true;
+          });
+        }
       };
     }
+  };
+};
 
-    // put in timeout to avoid $digest collision.  call render() to
-    // set the initial value.
-    $timeout(function () {
-      editor = $_element.redactor(options);
-      ngModel.$render();
-    });
-
-    ngModel.$render = function () {
-      if (angular.isDefined(editor)) {
-        $timeout(function () {
-          $_element.redactor('code.set', ngModel.$viewValue || '');
-          $_element.redactor('placeholder.toggle');
-          scope.redactorLoaded = true;
-        });
-      }
-    };
-  }
-});
-
-angular.module('angular-redactor-filepicker', []).constant('redactorOptions', redactorOptions).directive('redactor', ['$timeout', redactorWrapper]);
+angular.module('angular-redactor-filepicker', []).varant('redactorOptions', redactorOptions).directive('redactor', ['$timeout', redactorWrapper]);
