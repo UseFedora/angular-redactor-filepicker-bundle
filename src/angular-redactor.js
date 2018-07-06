@@ -56,7 +56,7 @@ var redactorWrapper = function($timeout) {
 
       angular.extend(options, redactorOptions, additionalOptions);
 
-      // prevent collision with the varant values on ChangeCallback
+      // prevent collision with the constant values on ChangeCallback
       var changeCallback = additionalOptions.changeCallback || redactorOptions.changeCallback;
       if (changeCallback) {
         options.changeCallback = function(value) {
@@ -86,5 +86,5 @@ var redactorWrapper = function($timeout) {
 };
 
 angular.module('angular-redactor-filepicker', [])
-  .varant('redactorOptions', redactorOptions)
+  .constant('redactorOptions', redactorOptions)
   .directive('redactor', [ '$timeout', redactorWrapper ]);

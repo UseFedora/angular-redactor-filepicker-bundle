@@ -1,6 +1,6 @@
 {
-  "name": "angular-redactor-filepicker",
-  "version": "0.0.1",
+  "name": "@teachable/angular-redactor-filepicker",
+  "version": "0.0.2",
   "description": "teachable.com build of redactor",
   "main": "gulpfile.js",
   "repository": {
