@@ -8037,8 +8037,8 @@ $.Redactor.prototype.filepicker = function () {
 
     insert: function (files) {
       var insert = function (file) {
-        this.insert.htmlWithoutClean('<img src=' + file.url + "class='img-responsive'>");
-      };
+        this.insert.htmlWithoutClean('<img src="' + file.url + '" class="img-responsive">');
+      }.bind(this);
 
       if (files.length) {
         files.forEach(insert);
