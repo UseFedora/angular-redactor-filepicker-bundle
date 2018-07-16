@@ -12,12 +12,13 @@ import './redactor';
 import './redactor-fullscreen';
 import './redactor-filepicker';
 import './redactor-fontfamily';
+import './redactor-fontsize';
 import './redactor-fontcolor';
 import './redactor-limiter';
 
 var redactorOptions = {};
 var plugins = [
-  'fontcolor', 'fontfamily', 'filepicker', 'removeFormatting', 'fullscreen'
+  'fontcolor', 'fontfamily', 'fontsize', 'filepicker', 'removeFormatting', 'fullscreen'
 ];
 var deniedTags = [ 'html', 'head', 'body', 'meta', 'applet' ];
 var buttons = [
