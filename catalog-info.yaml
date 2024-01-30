@@ -12,7 +12,7 @@ metadata:
 spec:
   type: service
   lifecycle: production
-  owner: Platform Enablement
+  owner: enablement
   heimdall:
     reportable: false
     pci: false
