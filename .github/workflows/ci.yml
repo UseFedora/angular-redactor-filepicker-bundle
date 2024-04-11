@@ -13,7 +13,7 @@ env:
 
 jobs:
   ci:
-    runs-on: [ staging-iac ]
+    runs-on: ubuntu
     steps:
       - name: checkout repository
         uses: actions/checkout@v4
@@ -22,4 +22,4 @@ jobs:
         with:
           node-version: 16
       - run: |
-          npm install
+          yarn install
