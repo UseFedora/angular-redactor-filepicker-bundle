@@ -4,7 +4,7 @@ on:
   pull_request:
   push:
     branches:
-      - main
+      - master
 
 env:
   GH_PACKAGE_USERNAME: ${{ secrets.GH_PACKAGE_USERNAME }}
